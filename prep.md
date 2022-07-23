@@ -15,6 +15,7 @@ Professionalism
 4. Knowing that every person in your team needs to understand all aspects of the project, how do you plan to approach the day-to-day work?
 daily standups and communication on tasks that need attention
 
+
 JJ
 
 1. What are the key strengths of each person on the team?
@@ -40,9 +41,13 @@ Each day we'll do a standup and make sure everyone is on the same page with what
 Anthony
 
 1. What are the key strengths of each person on the team?
+- A bright positive attitude that inspires his teammates to always be at their best.
 2. How can you best utilize these strengths in the execution of your project?
+- By optimizing the human condition, we see multiplicative effects because we are more than the sum of our parts.
 3. In which professional competencies do you each want to develop greater strength?
+- Sometimes I'm too passionate and need to rein it in.
 4. Knowing that every person in your team needs to understand all aspects of the project, how do you plan to approach the day-to-day work?
+- I will review every commit and question my team on their code until I have a thorough understanding of their contributions.
 
 ## Communication plan
 

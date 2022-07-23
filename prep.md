@@ -7,9 +7,13 @@ Jacob Amsbury, JJ Escandor, Aoife Mulligan, Anthony Turrinski
 Jacob
 
 1. What are the key strengths of each person on the team?
+Very adaptable and bug troubleshooting
 2. How can you best utilize these strengths in the execution of your project?
+Pair programming will be made easier
 3. In which professional competencies do you each want to develop greater strength?
+Professionalism
 4. Knowing that every person in your team needs to understand all aspects of the project, how do you plan to approach the day-to-day work?
+daily standups and communication on tasks that need attention
 
 JJ
 

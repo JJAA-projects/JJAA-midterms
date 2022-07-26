@@ -58,7 +58,7 @@
 - Pygame
 
 1. Domain Modeling
-- 
+- ![model](model.png)
 
 1. Using a Database? Make an Database Schema Diagram
 - Not Applicable

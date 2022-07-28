@@ -24,8 +24,8 @@ as asteroids, ores, and alien enemies. The player will be able to upgrade their 
 mine more efficiently. The game will track high score based on currency earned and the game ends with the player's death.
 
 ### Stretch
-Build a backend application with full CRUD functionality that the main game module can make API calls on.
-Host the backend in serverless function services like AWS Lambda or Vercel
+- Build a backend application with full CRUD functionality that the main game module can make API calls on.
+- Host the backend in serverless function services like AWS Lambda or Vercel
 
 
 ## Functional Requirements

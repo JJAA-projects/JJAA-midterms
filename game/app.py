@@ -10,7 +10,8 @@ class Component:
         self.intended_x = x
         self.intended_y = y
         # self.img = pygame.image.load(os.path.join("assets", img_path))
-        self.img = pygame.transform.scale(pygame.image.load(os.path.join("assets", img_path)), (32, 32))
+        self.img = pygame.transform.scale(pygame.image.load(
+            os.path.join("assets", img_path)), (32, 32))
         # self.facing = 0
 
     def move(self, direction):
@@ -38,19 +39,14 @@ class Component:
         if self.intended_y < self.y:
             self.y -= 2
 
-
-
     # def tile_to_pixel(self, x, y):
     #     return (x*16, y*16)
 
 
 class Ship(Component):
-
     def __init__(self, x, y, img_path):
         super().__init__(x, y, img_path)
 
     def render(self):
         pass
 # class Asteroid():
-
-

@@ -2,8 +2,15 @@ import os
 import pygame
 import sys
 
-from app import Ship
-from settings import *
+try:
+    from game.app import Ship
+except:
+    from app import ship
+
+try:
+    from settings import *
+except:
+    from game.settings import *
 
 pygame.init()
 pygame.display.set_caption("Crypto Astroneer")
@@ -41,7 +48,7 @@ def run():
             player_ship.update()
         else:
             pass
-            #player_miner.update()
+            # player_miner.update()
         pygame.display.update()
         clock.tick(FPS)
 
@@ -61,7 +68,8 @@ def key_checking(component):
         component.move("down")
         return True
     if keys[pygame.K_SPACE]:
-        player_ship.img = pygame.image.load(os.path.join("assets", "player_front.png"))
+        player_ship.img = pygame.image.load(
+            os.path.join("assets", "player_front.png"))
 
 
 if __name__ == "__main__":

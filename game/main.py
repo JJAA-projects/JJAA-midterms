@@ -3,9 +3,9 @@ import pygame
 import sys
 
 try:
-    from game.app import Ship
+    from app import Ship
 except:
-    from app import ship
+    from game.app import ship
 
 try:
     from settings import *

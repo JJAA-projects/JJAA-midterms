@@ -1,7 +1,7 @@
 import pytest
-from game.app import Component, Ship
-from game.settings import FPS, screen_height, screen_width
-from game.main import run, key_checking, clock, BG, WINDOW
+from ..app import Component, Ship
+from ..settings import FPS, screen_height, screen_width
+from ..main import run, key_checking, clock, BG, WINDOW
 
 
 def test_component_exists():

@@ -95,6 +95,7 @@ def key_checking(component):
     if keys[pygame.K_SPACE]:
         player_ship.img = pygame.image.load(
             os.path.join("assets", "player_front.png"))
+            
 
 if __name__ == "__main__":
     run()

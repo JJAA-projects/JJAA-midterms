@@ -10,11 +10,11 @@ class Tile(pygame.sprite.Sprite):  # inherits from built in pygame Sprite class
         self.image = pygame.transform.scale(pygame.image.load(filepath, 'tile'), (TILESIZE, TILESIZE))
         self._layer = 1
         self.rect = self.image.get_rect()
-        #print(filepath, x, y)
+        # print(filepath, x, y)
         self.rect.x, self.rect.y = x, y
 
-    def draw(self, surface):
-        surface.blit(self.image, (self.rect.x, self.rect.y))
+    # def draw(self, surface):
+    #     surface.blit(self.image, (self.rect.x, self.rect.y))
 
 
 class TileMap:
@@ -23,18 +23,19 @@ class TileMap:
         self.group = group
         self.tile_size = TILESIZE
         self.start_x, self.start_y = 0, 0
+        # TODO: below list may prevent garbage collection of sprites
         self.tiles = self.load_tiles(filename)
         self.map_w, self.map_h = WIN_WIDTH, WIN_HEIGHT
-        self.map_surface = pygame.Surface((self.map_w, self.map_h))
+        # self.map_surface = pygame.Surface((self.map_w, self.map_h))
         # self.map_surface.set_colorkey((0, 0, 0))
-        self.load_map()
+        # self.load_map()
 
-    def draw_map(self, surface):
-        surface.blit(self.map_surface, (30, 30))
+    # def draw_map(self, surface):
+    #     surface.blit(self.map_surface, (30, 30))
 
-    def load_map(self):
-        for tile in self.tiles:
-            tile.draw(self.map_surface)
+    # def load_map(self):
+    #     for tile in self.tiles:
+    #         tile.draw(self.map_surface)
 
     def read_csv(self, filename):
         """opens and reads csv file, appends rows of integers to list, returns the list"""
@@ -57,7 +58,6 @@ class TileMap:
 
         tile_list = [file for file in os.listdir("assets/MapTiles")]
         tile_list.sort()
-        print(tile_list)
 
         for row in zone:
             x = 0

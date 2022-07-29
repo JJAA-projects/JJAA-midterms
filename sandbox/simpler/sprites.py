@@ -24,7 +24,7 @@ class Player(pygame.sprite.Sprite):
 
         # self.image = pygame.Surface([self.width, self.height])  # can be used as placeholder
         # self.image.fill(255, 0, 0)  # fills rectangle with RGB color
-        self.image = pygame.image.load('player_front.png', 'Miner49er')
+        self.image = pygame.image.load('assets/player_front.png', 'Miner49er')
 
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = self.x, self.y

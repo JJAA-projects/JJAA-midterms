@@ -3,7 +3,7 @@ import sys
 
 from sprites import *
 from settings import *
-
+from tiles import *
 
 class Game:
 
@@ -25,6 +25,7 @@ class Game:
         self.playing = True
 
         self.all_sprites = pygame.sprite.LayeredUpdates()
+        self.tile_map = TileMap("sandbox/cleaned/Testmap02.csv", self.all_sprites)
         self.blocks = pygame.sprite.LayeredUpdates()
         self.enemies = pygame.sprite.LayeredUpdates()
         self.attacks = pygame.sprite.LayeredUpdates()
@@ -44,7 +45,9 @@ class Game:
     def draw(self):
         # TODO: Change this to load the tilemap
         # self.screen.fill((0, 0, 0))
-        self.screen.blit(self.bg, (0, 0))
+        # self.screen.blit(self.bg, (0, 0))
+        self.tile_map.draw_map(self.screen)
+        # self.screen.blit(self.tile_map.map_surface, (0, 0))
         self.all_sprites.draw(self.screen)
         self.clock.tick(FPS)
         pygame.display.update()

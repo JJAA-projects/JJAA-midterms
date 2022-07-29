@@ -17,6 +17,11 @@ class Player(pygame.sprite.Sprite):
         self.width = TILESIZE
         self.height = TILESIZE
 
+        self.x_change = 0
+        self.y_change = 0
+
+        self.facing = 'down'
+
         # self.image = pygame.Surface([self.width, self.height])  # can be used as placeholder
         # self.image.fill(255, 0, 0)  # fills rectangle with RGB color
         self.image = pygame.image.load('player_front.png', 'Miner49er')
@@ -24,4 +29,26 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = self.x, self.y
 
+    def update(self):
+        self.movement()
 
+        self.rect.x += self.x_change
+        self.rect.y += self.y_change
+
+        self.x_change = 0
+        self.y_change = 0
+
+    def movement(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            self.x_change -= TILESIZE
+            self.facing = 'left'
+        if keys[pygame.K_RIGHT]:
+            self.x_change += TILESIZE
+            self.facing = 'right'
+        if keys[pygame.K_UP]:
+            self.y_change -= TILESIZE
+            self.facing = 'up'
+        if keys[pygame.K_DOWN]:
+            self.y_change += TILESIZE
+            self.facing = 'down'

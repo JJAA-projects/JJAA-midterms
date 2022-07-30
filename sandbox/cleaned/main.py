@@ -25,6 +25,8 @@ class Game:
         self.playing = True
 
         self.all_sprites = pygame.sprite.LayeredUpdates()
+        self.current_map = pygame.sprite.LayeredUpdates()
+        # TODO: Load tilemap at appropriate times, not just the same tilemap every time on game start
         self.tile_map = TileMap("sandbox/cleaned/Testmap02.csv", self.all_sprites)
         self.blocks = pygame.sprite.LayeredUpdates()
         self.enemies = pygame.sprite.LayeredUpdates()
@@ -46,8 +48,9 @@ class Game:
         # TODO: Change this to load the tilemap
         # self.screen.fill((0, 0, 0))
         # self.screen.blit(self.bg, (0, 0))
-        self.tile_map.draw_map(self.screen)
+        # self.tile_map.draw_map(self.screen)
         # self.screen.blit(self.tile_map.map_surface, (0, 0))
+        self.current_map.draw(self.screen)
         self.all_sprites.draw(self.screen)
         self.clock.tick(FPS)
         pygame.display.update()

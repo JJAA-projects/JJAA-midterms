@@ -6,11 +6,6 @@ from sprites import *
 from settings import *
 from tiles import *
 
-try:
-    from app import *
-except:
-    from game.app import *
-
 class Game:
 
     def __init__(self):
@@ -76,17 +71,21 @@ class Game:
             for terrain in self.terrain_group:
                 if terrain.collide(self.player):
                     self.switch_map(terrain.map)
+                    self.player.player_is_ship = False
+                    self.player.facing = 'down'
+                    self.player.rect.x = WIN_WIDTH//2 - 24
+                    self.player.rect.y = TILESIZE * 5
         else:
             for ship in self.ship_group:
                 if ship.collide(self.player):
                     self.reload_space_map()
-            print("rockgroup: ", self.rock_group)
+                    self.player.player_is_ship = True
+                    self.player.rect.x = WIN_WIDTH//2 - 24
+                    self.player.rect.y = WIN_HEIGHT//2 - 24
             for idx, rock in enumerate(self.rock_group):
                 if rock.collide(self.player):
                     self.score += 1
-                    print("score: ", self.score)
                     self.rock_group.remove(rock)
-                    print("rock idx: ", idx)
             if self.score >= 30:
                 self.gameover = True
             elif self.score >= 20:
@@ -108,8 +107,7 @@ class Game:
         self.screen.blit(self.score_label, (TILESIZE, 10))
         self.screen.blit(self.level_label, (WIN_WIDTH - TILESIZE * 5, 10))
         if self.gameover:
-            self.screen.blit(self.gameover_label, (WIN_WIDTH / 2 - 96, WIN_HEIGHT / 2))
-
+            self.screen.blit(self.gameover_label, (WIN_WIDTH / 2 - 102, WIN_HEIGHT / 2))
         self.clock.tick(FPS)
         pygame.display.update()
         
@@ -130,18 +128,17 @@ class Game:
         if is_space_map:
             self.current_space_map = self.current_map
 
+
     # TODO: rename
     def reload_space_map(self):
-        # self.current_map.unload_tiles()
         self.current_map_group.empty()
         self.terrain_group.empty()
         self.ship_group.empty()
         self.rock_group.empty()
         self.current_map = self.current_space_map
         self.current_map.show_tiles()
-        self.player.rect.x = 96
-        self.player.rect.y = 96
-        # self.current_map.reload_tiles()
+        self.player.rect.x = 0
+        self.player.rect.y = 0
 
     def main(self):
         while self.playing:

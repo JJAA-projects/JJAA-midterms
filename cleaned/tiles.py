@@ -6,23 +6,18 @@ from settings import *
 class Tile(pygame.sprite.Sprite):  # inherits from built in pygame Sprite class
 
     def __init__(self, filepath, x, y, group):
-        # pygame.sprite.Sprite.__init__(self)
         super(Tile, self).__init__()
         group.add(self)
         self.group = group
         self.image = pygame.transform.scale(pygame.image.load(filepath, 'tile'), (TILESIZE, TILESIZE))
         self._layer = 2
         self.rect = self.image.get_rect()
-        # print(filepath, x, y)
         self.rect.x, self.rect.y = x, y
-
-    # def draw(self, surface):
-    #     surface.blit(self.image, (self.rect.x, self.rect.y))
 
 
 class Asteroid(pygame.sprite.Sprite):
 
-    def __init__(self, filepath, mappath, x, y, terrain_group, tile_group, ship_group):
+    def __init__(self, filepath, mappath, x, y, terrain_group, tile_group, ship_group, rock_group):
         super(Asteroid, self).__init__()
         terrain_group.add(self)
         self.group = tile_group
@@ -31,27 +26,24 @@ class Asteroid(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x, self.rect.y = x, y
-        self.map = TileMap(mappath, tile_group,terrain_group, ship_group, False)
+        self.map = TileMap(mappath, tile_group,terrain_group, ship_group, rock_group, False)
 
     def collide(self, player):
         return collide(self, player)
 
 class Rock(pygame.sprite.Sprite):
 
-    def __init__(self, filepath, mappath, x, y, terrain_group, tile_group):
+    def __init__(self, filepath, x, y, rock_group):
         super(Rock, self).__init__()
-        terrain_group.add(self)
-        self.group = tile_group
+        rock_group.add(self)
         # TODO: Load in rock sprite once rock mining functionality works
-        self.image = pygame.Surface([16,16])
-        self.image.fill((255,0,0))
+        self.image = pygame.transform.scale(pygame.image.load("assets/crypto_rock.png"), (TILESIZE, TILESIZE))
         # self.image = pygame.image.load(self.mock)
         # self.image = pygame.transform.scale(pygame.image.load(self.mock), (TILESIZE, TILESIZE))
-        self._layer = 8
+        self._layer = 7
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x, self.rect.y = x, y
-        self.map = TileMap(mappath, tile_group, terrain_group, False)
 
     def collide(self, player):
         return collide(self, player)
@@ -75,16 +67,18 @@ class ParkSpaceShip(pygame.sprite.Sprite):
 
 class TileMap:
 
-    def __init__(self, filename, tile_group, terrain_group, ship_group, is_space_map):
+    def __init__(self, filename, tile_group, terrain_group, ship_group, rock_group, is_space_map):
         self.is_space_map = is_space_map
         self.tile_group = tile_group
         self.terrain_group = terrain_group
         self.ship_group = ship_group
+        self.rock_group = rock_group
         self.tile_size = TILESIZE
         self.start_x, self.start_y = 0, 0
         # TODO: below list may prevent garbage collection of sprites
         self.tiles = self.load_tiles(filename)
         self.ships = self.generate_ship()
+        self.rock = self.generate_rock()
         # print(self.tiles[0], type(self.tiles[0]), "TileMAP print at init typeof tiles[0]")
         self.map_w, self.map_h = WIN_WIDTH, WIN_HEIGHT
 
@@ -119,6 +113,8 @@ class TileMap:
             self.terrain_group.add(terr)
         for ship in self.ships:
             self.ship_group.add(ship)
+        for rock in self.rock:
+            self.rock_group.add(rock)
 
     def unload_tiles(self):
         for tile in self.tiles:
@@ -127,17 +123,19 @@ class TileMap:
             terr.kill()
         for ship in self.ships:
             ship.kill()
+        for rock in self.rock:
+            rock.kill()
 
     def generate_terrain(self):
         terrain = []
         if self.is_space_map:
-            terrain.append(Asteroid("assets/MapTiles/zAstDebris03.png", "sandbox/cleaned/asttest1.csv", random.randint(3, 15) * self.tile_size, random.randint(3, 15) * self.tile_size, self.terrain_group, self.tile_group, self.ship_group))
+            terrain.append(Asteroid("assets/MapTiles/zAstDebris03.png", "cleaned/asttest1.csv", random.randrange(TILESIZE, TILESIZE * 28), random.randrange(TILESIZE, TILESIZE * 10), self.terrain_group, self.tile_group, self.ship_group, self.rock_group))
             terrain.append(
-                Asteroid("assets/MapTiles/zAstDebris03.png", "sandbox/cleaned/asttest2.csv", random.randint(3, 15) * self.tile_size,
-                         random.randint(3, 15) * self.tile_size, self.terrain_group, self.tile_group, self.ship_group))
+                Asteroid("assets/MapTiles/zAstDebris03.png", "cleaned/asttest2.csv", random.randrange(TILESIZE, TILESIZE * 15),
+                         random.randrange(TILESIZE * 10, TILESIZE *18 ), self.terrain_group, self.tile_group, self.ship_group, self.rock_group))
             terrain.append(
-                Asteroid("assets/MapTiles/zAstDebris03.png", "sandbox/cleaned/asttest3.csv", random.randint(3, 15) * self.tile_size,
-                         random.randint(3, 15) * self.tile_size, self.terrain_group, self.tile_group, self.ship_group))
+                Asteroid("assets/MapTiles/zAstDebris03.png", "cleaned/asttest3.csv", random.randrange(TILESIZE * 16, TILESIZE * 28),
+                         random.randrange(TILESIZE * 10, TILESIZE * 18), self.terrain_group, self.tile_group, self.ship_group, self.rock_group))
             # for i in range(ASTEROID_COUNT):
             #     terrain.append(Asteroid("assets/MapTiles/zAstDebris03.png", ADDMAPPATH, random.randint(3,15)*self.tile_size, random.randint(3,15)*self.tile_size, self.terrain_group, self.tile_group))
         return terrain
@@ -146,13 +144,28 @@ class TileMap:
 
     def generate_ship(self):
         ship = []
-        print("hi")
         if not self.is_space_map:
             ship.append(ParkSpaceShip(None, WIN_WIDTH//2, 100, self.ship_group))
         return ship
 
+    def generate_rock(self):
+        rock = []
+        print("rock")
+        if not self.is_space_map:
+            rock.append(Rock(None, random.randrange(TILESIZE * 6, TILESIZE * 9), random.randrange(TILESIZE * 5, TILESIZE * 10), self.rock_group))
+            rock.append(Rock(None, random.randrange(TILESIZE * 9, TILESIZE * 12), random.randrange(TILESIZE * 5, TILESIZE * 10), self.rock_group))
+            rock.append(Rock(None, random.randrange(TILESIZE * 12, TILESIZE * 15), random.randrange(TILESIZE * 5, TILESIZE * 10), self.rock_group))
+            rock.append(Rock(None, random.randrange(TILESIZE * 15, TILESIZE * 18), random.randrange(TILESIZE * 5, TILESIZE * 10), self.rock_group))
+            rock.append(Rock(None, random.randrange(TILESIZE * 18, TILESIZE * 21), random.randrange(TILESIZE * 5, TILESIZE * 10), self.rock_group))
+            rock.append(Rock(None, random.randrange(TILESIZE * 6, TILESIZE * 9), random.randrange(TILESIZE * 11, TILESIZE * 15), self.rock_group))
+            rock.append(Rock(None, random.randrange(TILESIZE * 9, TILESIZE * 12), random.randrange(TILESIZE * 11, TILESIZE * 15), self.rock_group))
+            rock.append(Rock(None, random.randrange(TILESIZE * 12, TILESIZE * 15), random.randrange(TILESIZE * 11, TILESIZE * 15), self.rock_group))
+            rock.append(Rock(None, random.randrange(TILESIZE * 15, TILESIZE * 18), random.randrange(TILESIZE * 11, TILESIZE * 15), self.rock_group))
+            rock.append(Rock(None, random.randrange(TILESIZE * 18, TILESIZE * 21), random.randrange(TILESIZE * 11, TILESIZE * 15), self.rock_group))
+        return rock
+
     def load_tiles(self, filename):
-        """populates tile spites to 2D grid and returns it"""
+        """populates tile sprites to 2D grid and returns it"""
         tiles = []
 
         zone = self.read_csv(filename)
@@ -174,6 +187,7 @@ class TileMap:
 
         self.map_w, self.map_h = x * self.tile_size, y * self.tile_size
         return tiles
+
 
 
 def collide(obj1, obj2):

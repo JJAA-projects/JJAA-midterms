@@ -1,6 +1,7 @@
 import pygame
 import sys
 import enum
+import gc
 
 from sprites import *
 from settings import *
@@ -25,7 +26,13 @@ class Game:
         self.current_space_map = None
         self.score = 0
         self.level = 1
-        self.main_font = pygame.font.SysFont("Calibri", 40)
+        self.health = 10
+        self.score_sound = pygame.mixer.Sound("assets/Sound/score.wav")
+        self.asteroid_sound = pygame.mixer.Sound("assets/Sound/asteroid.wav")
+        self.level_sound = pygame.mixer.Sound("assets/Sound/level.wav")
+        self.level_sound = pygame.mixer.Sound("assets/Sound/level.wav")
+        self.gameover_sound = pygame.mixer.Sound("assets/Sound/gameover.wav")
+        self.main_font = pygame.font.SysFont("comicsans", 40, True, True)
 
     def run(self):
         """run game"""
@@ -37,7 +44,7 @@ class Game:
         self.ship_group = pygame.sprite.LayeredUpdates()
         self.rock_group = pygame.sprite.LayeredUpdates()
         # TODO: This is just a testmap for the first space map
-        self.update_map("cleaned/TestSpaceMap01.csv", True)
+        self.update_map("game/TestSpaceMap01.csv", True)
         self.current_space_map = self.current_map
         self.switch_map(self.current_map)
         self.blocks = pygame.sprite.LayeredUpdates()
@@ -56,9 +63,9 @@ class Game:
         # TODO: remove. Only for testing purposes
         keys = pygame.key.get_pressed()
         if (keys[pygame.K_0]):
-            self.update_map("cleaned/Testmap02.csv", False)
+            self.update_map("game/Testmap02.csv", False)
         if (keys[pygame.K_9]):
-            self.update_map("cleaned/Testmap03.csv", True)
+            self.update_map("game/Testmap03.csv", True)
         if (keys[pygame.K_8]):
             self.reload_space_map()
 
@@ -70,6 +77,7 @@ class Game:
         if self.player.player_is_ship:
             for terrain in self.terrain_group:
                 if terrain.collide(self.player):
+                    self.asteroid_sound.play()
                     self.switch_map(terrain.map)
                     self.player.player_is_ship = False
                     self.player.facing = 'down'
@@ -78,20 +86,25 @@ class Game:
         else:
             for ship in self.ship_group:
                 if ship.collide(self.player):
+                    self.asteroid_sound.play()
                     self.reload_space_map()
                     self.player.player_is_ship = True
                     self.player.rect.x = WIN_WIDTH//2 - 24
                     self.player.rect.y = WIN_HEIGHT//2 - 24
             for idx, rock in enumerate(self.rock_group):
                 if rock.collide(self.player):
+                    self.score_sound.play()
                     self.score += 1
                     self.rock_group.remove(rock)
             if self.score >= 30:
                 self.gameover = True
+                self.player._layer = 1
             elif self.score >= 20:
                 self.level = 3
+                self.health = 6
             elif self.score >= 10:
                 self.level = 2
+                self.health = 8
 
 
     def draw(self):
@@ -105,9 +118,12 @@ class Game:
         self.ship_group.draw(self.screen)
         self.rock_group.draw(self.screen)
         self.screen.blit(self.score_label, (TILESIZE, 10))
-        self.screen.blit(self.level_label, (WIN_WIDTH - TILESIZE * 5, 10))
+        self.screen.blit(self.level_label, (WIN_WIDTH - TILESIZE * 6, 10))
         if self.gameover:
-            self.screen.blit(self.gameover_label, (WIN_WIDTH / 2 - 102, WIN_HEIGHT / 2))
+            self.screen.blit(self.gameover_label, (WIN_WIDTH // 2 - 136, WIN_HEIGHT / 2 - TILESIZE * 2))
+        pygame.draw.rect(self.screen, (200,0,0), (WIN_WIDTH // 2 - TILESIZE * 3, 24, TILESIZE * 6, 24))
+        pygame.draw.rect(self.screen, (0,200,0), (WIN_WIDTH //2 - TILESIZE * 3, 24, ((TILESIZE * 6) - (((TILESIZE * 6)/10) * (10 - self.health))), 24))
+
         self.clock.tick(FPS)
         pygame.display.update()
         

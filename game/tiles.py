@@ -115,12 +115,12 @@ class TileMap:
     def generate_terrain(self):
         terrain = []
         if self.is_space_map:
-            terrain.append(Asteroid("assets/MapTiles/zAstDebris03.png", "cleaned/asttest1.csv", random.randrange(TILESIZE, TILESIZE * 28), random.randrange(TILESIZE, TILESIZE * 10), self.terrain_group, self.tile_group, self.ship_group, self.rock_group))
+            terrain.append(Asteroid("assets/MapTiles/zAstDebris03.png", "game/asttest1.csv", random.randrange(TILESIZE, TILESIZE * 28), random.randrange(TILESIZE, TILESIZE * 10), self.terrain_group, self.tile_group, self.ship_group, self.rock_group))
             terrain.append(
-                Asteroid("assets/MapTiles/zAstDebris03.png", "cleaned/asttest1.csv", random.randrange(TILESIZE, TILESIZE * 15),
+                Asteroid("assets/MapTiles/zAstDebris03.png", "game/asttest1.csv", random.randrange(TILESIZE, TILESIZE * 15),
                          random.randrange(TILESIZE * 10, TILESIZE *18 ), self.terrain_group, self.tile_group, self.ship_group, self.rock_group))
             terrain.append(
-                Asteroid("assets/MapTiles/zAstDebris03.png", "cleaned/asttest1.csv", random.randrange(TILESIZE * 16, TILESIZE * 28),
+                Asteroid("assets/MapTiles/zAstDebris03.png", "game/asttest1.csv", random.randrange(TILESIZE * 16, TILESIZE * 28),
                          random.randrange(TILESIZE * 10, TILESIZE * 18), self.terrain_group, self.tile_group, self.ship_group, self.rock_group))
         return terrain
         pass

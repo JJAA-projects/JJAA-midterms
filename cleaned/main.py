@@ -1,5 +1,6 @@
 import pygame
 import sys
+import enum
 
 from sprites import *
 from settings import *
@@ -20,6 +21,7 @@ class Game:
         self.font = pygame.font.get_default_font()  # can be customized
         self.running = True
         self.playing = False
+        self.gameover = False
         # TODO: BOOL for titlescreen. Stop all playerfunction and don't render player while this is true. Set to
         #  false when player starts the game
         self.bg = pygame.image.load("assets/title_screen.jpg")
@@ -27,8 +29,8 @@ class Game:
         self.current_map = None
         self.current_space_map = None
         self.score = 0
+        self.level = 1
         self.main_font = pygame.font.SysFont("Calibri", 40)
-        self.score_label = self.main_font.render(f"Score: {self.score}", True, (255, 255, 255))
 
     def run(self):
         """run game"""
@@ -38,8 +40,9 @@ class Game:
         self.terrain_group = pygame.sprite.LayeredUpdates()
         self.rocks_group = pygame.sprite.LayeredUpdates()
         self.ship_group = pygame.sprite.LayeredUpdates()
+        self.rock_group = pygame.sprite.LayeredUpdates()
         # TODO: This is just a testmap for the first space map
-        self.update_map("sandbox/cleaned/TestSpaceMap01.csv", True)
+        self.update_map("cleaned/TestSpaceMap01.csv", True)
         self.current_space_map = self.current_map
         self.switch_map(self.current_map)
         self.blocks = pygame.sprite.LayeredUpdates()
@@ -47,6 +50,7 @@ class Game:
         self.attacks = pygame.sprite.LayeredUpdates()
         self.player = Player(self, 1, 1, self.all_sprites_group)
         self.ship_group.empty()
+        self.rock_group.empty()
 
     def events(self):
         """listens for events"""
@@ -57,9 +61,9 @@ class Game:
         # TODO: remove. Only for testing purposes
         keys = pygame.key.get_pressed()
         if (keys[pygame.K_0]):
-            self.update_map("sandbox/cleaned/Testmap02.csv", False)
+            self.update_map("cleaned/Testmap02.csv", False)
         if (keys[pygame.K_9]):
-            self.update_map("sandbox/cleaned/Testmap03.csv", True)
+            self.update_map("cleaned/Testmap03.csv", True)
         if (keys[pygame.K_8]):
             self.reload_space_map()
 
@@ -76,18 +80,39 @@ class Game:
             for ship in self.ship_group:
                 if ship.collide(self.player):
                     self.reload_space_map()
-
+            print("rockgroup: ", self.rock_group)
+            for idx, rock in enumerate(self.rock_group):
+                if rock.collide(self.player):
+                    self.score += 1
+                    print("score: ", self.score)
+                    self.rock_group.remove(rock)
+                    print("rock idx: ", idx)
+            if self.score >= 30:
+                self.gameover = True
+            elif self.score >= 20:
+                self.level = 3
+            elif self.score >= 10:
+                self.level = 2
 
 
     def draw(self):
         # TODO: Change this to load the tilemap
+        self.score_label = self.main_font.render(f"Score: {self.score}", True, (0, 255, 255))
+        self.level_label = self.main_font.render(f"Level: {self.level}" , True, (0, 255, 255))
+        self.gameover_label = self.main_font.render(f"GAME OVER", True, (255, 0, 0))
         self.current_map_group.draw(self.screen)
         self.terrain_group.draw(self.screen)
         self.all_sprites_group.draw(self.screen)
         self.ship_group.draw(self.screen)
-        self.screen.blit(self.score_label, (10, 10))
+        self.rock_group.draw(self.screen)
+        self.screen.blit(self.score_label, (TILESIZE, 10))
+        self.screen.blit(self.level_label, (WIN_WIDTH - TILESIZE * 5, 10))
+        if self.gameover:
+            self.screen.blit(self.gameover_label, (WIN_WIDTH / 2 - 96, WIN_HEIGHT / 2))
+
         self.clock.tick(FPS)
         pygame.display.update()
+        
 
     def switch_map(self, map):
         self.current_map.unload_tiles()
@@ -99,8 +124,9 @@ class Game:
         self.current_map_group.empty()
         self.terrain_group.empty()
         self.ship_group.empty()
+        self.rock_group.empty()
         self.current_map = None
-        self.current_map = TileMap(filepath, self.current_map_group, self.terrain_group, self.ship_group, is_space_map)
+        self.current_map = TileMap(filepath, self.current_map_group, self.terrain_group, self.ship_group,self.rock_group, is_space_map)
         if is_space_map:
             self.current_space_map = self.current_map
 
@@ -110,6 +136,7 @@ class Game:
         self.current_map_group.empty()
         self.terrain_group.empty()
         self.ship_group.empty()
+        self.rock_group.empty()
         self.current_map = self.current_space_map
         self.current_map.show_tiles()
         self.player.rect.x = 96

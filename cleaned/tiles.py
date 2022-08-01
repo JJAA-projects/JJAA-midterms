@@ -38,8 +38,6 @@ class Rock(pygame.sprite.Sprite):
         rock_group.add(self)
         # TODO: Load in rock sprite once rock mining functionality works
         self.image = pygame.transform.scale(pygame.image.load("assets/crypto_rock.png"), (TILESIZE, TILESIZE))
-        # self.image = pygame.image.load(self.mock)
-        # self.image = pygame.transform.scale(pygame.image.load(self.mock), (TILESIZE, TILESIZE))
         self._layer = 7
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
@@ -54,9 +52,7 @@ class ParkSpaceShip(pygame.sprite.Sprite):
         super(ParkSpaceShip, self).__init__()
         ship_group.add(self)
          # TODO: Load in space ship sprite once rock mining functionality works
-        # self.image = pygame.Surface([16,16])
-        # self.image.fill((255,255,0))
-        self.image = pygame.transform.scale(pygame.image.load("assets/temp_ship.png"), (TILESIZE, TILESIZE))
+        self.image = pygame.transform.scale(pygame.image.load("assets/ShipUpStill.png"), (TILESIZE * 1.5, TILESIZE * 1.5))
         self._layer = 8
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
@@ -84,16 +80,6 @@ class TileMap:
 
         # TODO: This is a bool that will determine if the map should be populated with rocks/enemies or with asteroids.
         self.terrain = self.generate_terrain()
-        # self.map_surface = pygame.Surface((self.map_w, self.map_h))
-        # self.map_surface.set_colorkey((0, 0, 0))
-        # self.load_map()
-
-    # def draw_map(self, surface):
-    #     surface.blit(self.map_surface, (30, 30))
-
-    # def load_map(self):
-    #     for tile in self.tiles:
-    #         tile.draw(self.map_surface)
 
     def read_csv(self, filename):
         """opens and reads csv file, appends rows of integers to list, returns the list"""
@@ -131,13 +117,11 @@ class TileMap:
         if self.is_space_map:
             terrain.append(Asteroid("assets/MapTiles/zAstDebris03.png", "cleaned/asttest1.csv", random.randrange(TILESIZE, TILESIZE * 28), random.randrange(TILESIZE, TILESIZE * 10), self.terrain_group, self.tile_group, self.ship_group, self.rock_group))
             terrain.append(
-                Asteroid("assets/MapTiles/zAstDebris03.png", "cleaned/asttest2.csv", random.randrange(TILESIZE, TILESIZE * 15),
+                Asteroid("assets/MapTiles/zAstDebris03.png", "cleaned/asttest1.csv", random.randrange(TILESIZE, TILESIZE * 15),
                          random.randrange(TILESIZE * 10, TILESIZE *18 ), self.terrain_group, self.tile_group, self.ship_group, self.rock_group))
             terrain.append(
-                Asteroid("assets/MapTiles/zAstDebris03.png", "cleaned/asttest3.csv", random.randrange(TILESIZE * 16, TILESIZE * 28),
+                Asteroid("assets/MapTiles/zAstDebris03.png", "cleaned/asttest1.csv", random.randrange(TILESIZE * 16, TILESIZE * 28),
                          random.randrange(TILESIZE * 10, TILESIZE * 18), self.terrain_group, self.tile_group, self.ship_group, self.rock_group))
-            # for i in range(ASTEROID_COUNT):
-            #     terrain.append(Asteroid("assets/MapTiles/zAstDebris03.png", ADDMAPPATH, random.randint(3,15)*self.tile_size, random.randint(3,15)*self.tile_size, self.terrain_group, self.tile_group))
         return terrain
         pass
 
@@ -145,7 +129,7 @@ class TileMap:
     def generate_ship(self):
         ship = []
         if not self.is_space_map:
-            ship.append(ParkSpaceShip(None, WIN_WIDTH//2, 100, self.ship_group))
+            ship.append(ParkSpaceShip(None, WIN_WIDTH//2 - TILESIZE, 100, self.ship_group))
         return ship
 
     def generate_rock(self):
@@ -178,10 +162,7 @@ class TileMap:
         for row in zone:
             x = 0
             for tile in row:
-                #print(tile)
-                #print(tile_list[int(tile)])
                 tiles.append(Tile("assets/MapTiles/"+tile_list[int(tile)], x * self.tile_size, y * self.tile_size, self.tile_group))
-                # print(type(tiles[0]))
                 x += 1
             y += 1
 

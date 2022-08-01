@@ -1,3 +1,4 @@
+from turtle import window_height, window_width
 import pygame
 from settings import *
 import math
@@ -12,20 +13,18 @@ class Player(pygame.sprite.Sprite):
         self.groups = group
         pygame.sprite.Sprite.__init__(self, self.groups)
 
-        self.x = x * TILESIZE
-        self.y = y * TILESIZE
-        self.width = TILESIZE
-        self.height = TILESIZE
+        self.x = x * WIN_WIDTH / 2 - 16
+        self.y = y * WIN_HEIGHT / 2
+        self.width = TILESIZE * 1.5
+        self.height = TILESIZE * 1.5
 
         self.x_change = 0
         self.y_change = 0
 
-        self.player_is_ship = False
-        self.facing = 'down'
+        self.player_is_ship = True
+        self.facing = 'up'
         self.action_timer = 0
         self.action_timer_max = ACTION_TIMER
-        # self.image = pygame.Surface([self.width, self.height])  # can be used as placeholder
-        # self.image.fill(255, 0, 0)  # fills rectangle with RGB color
         self.miner_image_set = {
             'left': pygame.transform.scale(pygame.image.load('assets/Miner/MinerLeftStand.bmp', 'Miner49er'),
                                            (TILESIZE, TILESIZE)),

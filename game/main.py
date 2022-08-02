@@ -1,100 +1,201 @@
-import os
 import pygame
 import sys
-import random
+import enum
+import time
 
-try:
-    from app import Ship, Asteroid
-except:
-    from game.app import Ship, Asteroid
-
-try:
-    from settings import *
-except:
-    from game.settings import *
+from sprites import *
+from settings import *
+from tiles import *
 
 
-pygame.init()
-pygame.display.set_caption("Crypto Astroneer")
-clock = pygame.time.Clock()
-angle = 5
-
-WINDOW = pygame.display.set_mode((screen_width, screen_height))
-BG = pygame.image.load(os.path.join("assets", "title_screen.jpg"))
-BG = pygame.transform.scale(BG, (960, 640))
-player_ship = Ship(screen_width/2, screen_height/2, "Ship/ShipUpFlying.bmp")
-player_miner = None
-player_is_ship = True
-asteroid_one = Asteroid(random.randrange(100, screen_width-100), random.randrange(100, screen_height-100), "MapTiles/zAstDebris03.png")
-asteroid_two = Asteroid(random.randrange(100, screen_width-100), random.randrange(100, screen_height-100), "MapTiles/zAstDebris03.png")
-asteroid_three = Asteroid(random.randrange(100, screen_width-100), random.randrange(100, screen_height-100), "MapTiles/zAstDebris03.png")
-main_font = pygame.font.SysFont("Calibri", 40)
-score = 0
-level = 0
-score_label = main_font.render(f"Score: {score}", True, (255, 255, 255))
-level_label = main_font.render(f"Level: {level}", True, (255, 255, 255))
 
 
-def run():
-    movement_timer = 0
+class Game:
 
-    while True:
+    def __init__(self):
+        pygame.init()
+        pygame.display.set_caption("Crypto Astroneer")
+        self.screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+        self.clock = pygame.time.Clock()
+        self.font = pygame.font.get_default_font()  # can be customized
+        self.running = True
+        self.playing = False
+        self.gameover = False
+        # TODO: BOOL for titlescreen. Stop all playerfunction and don't render player while this is true. Set to
+        #  false when player starts the game
+        self.bg = pygame.image.load("assets/title_screen.jpg")
+        self.bg = pygame.transform.scale(self.bg, (960, 640))
+        self.current_map = None
+        self.current_space_map = None
+        self.score = 0
+        self.level = 1
+        self.health = 10
+        self.score_sound = pygame.mixer.Sound("assets/Sound/score.wav")
+        self.asteroid_sound = pygame.mixer.Sound("assets/Sound/asteroid.wav")
+        self.level_sound = pygame.mixer.Sound("assets/Sound/level.wav")
+        self.level_sound = pygame.mixer.Sound("assets/Sound/level.wav")
+        self.gameover_sound = pygame.mixer.Sound("assets/Sound/gameover.wav")
+        self.clock = pygame.time.Clock()
+        self.minutes = 2
+        self.seconds = 60
+        self.milliseconds = 100000
+        self.main_font = pygame.font.SysFont("comicsans", 40, True, True)
+
+    def run(self):
+        """run game"""
+        self.playing = True
+        self.all_sprites_group = pygame.sprite.LayeredUpdates()
+        self.current_map_group = pygame.sprite.LayeredUpdates()
+        self.terrain_group = pygame.sprite.LayeredUpdates()
+        self.rocks_group = pygame.sprite.LayeredUpdates()
+        self.ship_group = pygame.sprite.LayeredUpdates()
+        self.rock_group = pygame.sprite.LayeredUpdates()
+        # TODO: This is just a testmap for the first space map
+        self.update_map("game/TestSpaceMap01.csv", True)
+        self.current_space_map = self.current_map
+        self.switch_map(self.current_map)
+        self.blocks = pygame.sprite.LayeredUpdates()
+        self.enemies = pygame.sprite.LayeredUpdates()
+        self.attacks = pygame.sprite.LayeredUpdates()
+        self.player = Player(self, 1, 1, self.all_sprites_group)
+        self.ship_group.empty()
+        self.rock_group.empty()
+
+    def events(self):
+        """listens for events"""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+                self.playing = False
+                self.running = False
+        # TODO: remove. Only for testing purposes
+        keys = pygame.key.get_pressed()
+        if (keys[pygame.K_0]):
+            self.update_map("game/Testmap02.csv", False)
+        if (keys[pygame.K_9]):
+            self.update_map("game/Testmap03.csv", True)
+        if (keys[pygame.K_8]):
+            self.reload_space_map()
 
-        WINDOW.blit(BG, (0, 0))
-        WINDOW.blit(pygame.transform.rotate(player_ship.img, player_ship.angle), (player_ship.x, player_ship.y))
-        WINDOW.blit(asteroid_one.img,(asteroid_one.x, asteroid_one.y))
-        WINDOW.blit(asteroid_two.img,(asteroid_two.x, asteroid_two.y))
-        WINDOW.blit(asteroid_three.img,(asteroid_three.x, asteroid_three.y))
-        WINDOW.blit(score_label, (10,10))
-        WINDOW.blit(level_label, (screen_width - level_label.get_width() - 10,10))
 
-        player_ship.collision(asteroid_one)
-        player_ship.collision(asteroid_two)
-        player_ship.collision(asteroid_three)
-
-        if movement_timer > 7:
-            if player_is_ship:
-                if key_checking(player_ship):
-                    movement_timer = 0
-            else:
-                if key_checking(player_miner):
-                    movement_timer = 0
+    def update(self):
+        self.all_sprites_group.update()
+        self.current_map_group.update()
+        self.terrain_group.update()
+        if self.player.player_is_ship:
+            for terrain in self.terrain_group:
+                if terrain.collide(self.player):
+                    self.asteroid_sound.play()
+                    self.switch_map(terrain.map)
+                    self.player.player_is_ship = False
+                    self.player.facing = 'down'
+                    self.player.rect.x = WIN_WIDTH//2 - 24
+                    self.player.rect.y = TILESIZE * 5
         else:
-            movement_timer += 1
-        if player_is_ship:
-            player_ship.update()
-        else:
-            pass
-            # player_miner.update()
+            for ship in self.ship_group:
+                if ship.collide(self.player):
+                    self.asteroid_sound.play()
+                    self.reload_space_map()
+                    self.player.player_is_ship = True
+                    self.player.rect.x = WIN_WIDTH//2 - 24
+                    self.player.rect.y = WIN_HEIGHT//2 - 24
+            for idx, rock in enumerate(self.rock_group):
+                if rock.collide(self.player):
+                    self.score_sound.play()
+                    self.score += 1
+                    self.rock_group.remove(rock)
+            if self.score >= 30:
+                self.gameover = True
+                self.player._layer = 1
+            elif self.score >= 20:
+                self.level = 3
+                self.health = 6
+            elif self.score >= 10:
+                self.level = 2
+                self.health = 8
+
+
+    def draw(self):
+        # TODO: Change this to load the tilemap
+        self.score_label = self.main_font.render(f"Score: {self.score}", True, (0, 255, 255))
+        self.level_label = self.main_font.render(f"Level: {self.level}" , True, (0, 255, 255))
+        self.gameover_label = self.main_font.render(f"GAME OVER", True, (255, 0, 0))
+        self.current_map_group.draw(self.screen)
+        self.terrain_group.draw(self.screen)
+        self.all_sprites_group.draw(self.screen)
+        self.ship_group.draw(self.screen)
+        self.rock_group.draw(self.screen)
+        self.screen.blit(self.score_label, (TILESIZE, 10))
+        self.screen.blit(self.level_label, (WIN_WIDTH - TILESIZE * 6, 10))
+        self.countdown()
+        if self.gameover:
+            self.screen.blit(self.gameover_label, (WIN_WIDTH // 2 - 136, WIN_HEIGHT / 2 - TILESIZE * 2))
+        pygame.draw.rect(self.screen, (200,0,0), (WIN_WIDTH // 2 - TILESIZE * 3, 24, TILESIZE * 6, 24))
+        pygame.draw.rect(self.screen, (0,200,0), (WIN_WIDTH //2 - TILESIZE * 3, 24, ((TILESIZE * 6) - (((TILESIZE * 6)/10) * (10 - self.health))), 24))
+        self.clock.tick(FPS)
         pygame.display.update()
-        clock.tick(FPS)
+        
+
+    def switch_map(self, map):
+        self.current_map.unload_tiles()
+        self.current_map = map
+        self.current_map.show_tiles()
 
 
-def key_checking(component):
-    keys = pygame.key.get_pressed()
-    if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and component.intended_x > (0 + 16):
-        component.move("left")
-        component.angle = 90
-        return True
-    if (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and component.intended_x < (screen_width - 16):
-        component.move("right")
-        component.angle = 270
-        return True
-    if (keys[pygame.K_UP] or keys[pygame.K_w]) and component.intended_y > (0 + 16):
-        component.move("up")
-        component.angle = 0
-        return True
-    if (keys[pygame.K_DOWN] or keys[pygame.K_s]) and component.intended_y < (screen_height - 16):
-        component.move("down")
-        component.angle = 180
-        return True
-    if keys[pygame.K_SPACE]:
-        player_ship.img = pygame.image.load(
-            os.path.join("assets", "player_front.png"))
+    def update_map(self, filepath, is_space_map):
+        self.current_map_group.empty()
+        self.terrain_group.empty()
+        self.ship_group.empty()
+        self.rock_group.empty()
+        self.current_map = None
+        self.current_map = TileMap(filepath, self.current_map_group, self.terrain_group, self.ship_group,self.rock_group, is_space_map)
+        if is_space_map:
+            self.current_space_map = self.current_map
 
-if __name__ == "__main__":
-    run()
+    def countdown(self):
+        if self.minutes >= 0 and self.seconds >= 0:
+            if self.milliseconds < 1000:
+                self.milliseconds += 1000
+            if self.seconds <= 60:
+                self.seconds -= 0.05
+            if self.seconds <= 0:
+                self.seconds += 60
+                self.minutes -= 1
+        if int(self.minutes) == -1:
+            self.minutes = 0
+            self.seconds = 0
+            self.gameover = True
+        if self.seconds > 10:
+            time = "{}:{}".format(self.minutes, int(self.seconds))
+        else:
+            time = "{}:0{}".format(self.minutes, int(self.seconds))
+        self.time_label=self.main_font.render(time, True, (255, 255, 255))
+        self.milliseconds += self.clock.tick_busy_loop(60) #
+        self.screen.blit(self.time_label, (WIN_WIDTH//2 - TILESIZE * 1.5, WIN_HEIGHT - TILESIZE * 2))
+
+    # TODO: rename
+    def reload_space_map(self):
+        self.current_map_group.empty()
+        self.terrain_group.empty()
+        self.ship_group.empty()
+        self.rock_group.empty()
+        self.current_map = self.current_space_map
+        self.current_map.show_tiles()
+        self.player.rect.x = 0
+        self.player.rect.y = 0
+
+    def main(self):
+        while self.playing:
+            self.events()
+            self.update()
+            self.draw()
+        self.running = False
+
+
+if __name__ == '__main__':
+    game = Game()
+    game.run()
+    while game.running:
+        game.main()
+
+    pygame.quit()
+

@@ -1,4 +1,11 @@
+
+
+WIN_WIDTH = 960
+WIN_HEIGHT = 640
+TILESIZE = 32
 FPS = 60
-screen_height = 640
-screen_width = 960
-angle = 0
+ACTION_TIMER = 8
+ASTEROID_COUNT = 3
+
+PLAYER_LAYER = 9
+GROUND_LAYER = 1

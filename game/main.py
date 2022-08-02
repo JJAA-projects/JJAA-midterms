@@ -23,8 +23,7 @@ class Game:
         self.gameover = False
         # TODO: BOOL for titlescreen. Stop all playerfunction and don't render player while this is true. Set to
         #  false when player starts the game
-        self.bg = pygame.image.load("assets/title_screen.jpg")
-        self.bg = pygame.transform.scale(self.bg, (960, 640))
+        self.player = None
         self.current_map = None
         self.current_space_map = None
         self.score = 0
@@ -38,8 +37,10 @@ class Game:
         self.clock = pygame.time.Clock()
         self.minutes = 2
         self.seconds = 60
-        self.milliseconds = 100000
+        self.milliseconds = 0
         self.main_font = pygame.font.SysFont("comicsans", 40, True, True)
+        self.current_frames = 0
+        self.current_time = time.time()*1000
 
     def run(self):
         """run game"""
@@ -57,7 +58,7 @@ class Game:
         self.blocks = pygame.sprite.LayeredUpdates()
         self.enemies = pygame.sprite.LayeredUpdates()
         self.attacks = pygame.sprite.LayeredUpdates()
-        self.player = Player(self, 1, 1, self.all_sprites_group)
+        self.player = Player(self, 1, 1, self.all_sprites_group, self.current_map.collision_map)
         self.ship_group.empty()
         self.rock_group.empty()
 
@@ -88,7 +89,7 @@ class Game:
                     self.switch_map(terrain.map)
                     self.player.player_is_ship = False
                     self.player.facing = 'down'
-                    self.player.rect.x = WIN_WIDTH//2 - 24
+                    self.player.rect.x = WIN_WIDTH//2 - TILESIZE
                     self.player.rect.y = TILESIZE * 5
         else:
             for ship in self.ship_group:
@@ -96,13 +97,14 @@ class Game:
                     self.asteroid_sound.play()
                     self.reload_space_map()
                     self.player.player_is_ship = True
-                    self.player.rect.x = WIN_WIDTH//2 - 24
-                    self.player.rect.y = WIN_HEIGHT//2 - 24
+                    self.player.rect.x = WIN_WIDTH//2 - TILESIZE
+                    self.player.rect.y = WIN_HEIGHT//2 - TILESIZE
             for idx, rock in enumerate(self.rock_group):
                 if rock.collide(self.player):
                     self.score_sound.play()
                     self.score += 1
                     self.rock_group.remove(rock)
+                    self.current_map.rocks.remove(rock)
             if self.score >= 30:
                 self.gameover = True
                 self.player._layer = 1
@@ -122,8 +124,8 @@ class Game:
         self.current_map_group.draw(self.screen)
         self.terrain_group.draw(self.screen)
         self.all_sprites_group.draw(self.screen)
-        self.ship_group.draw(self.screen)
         self.rock_group.draw(self.screen)
+        self.ship_group.draw(self.screen)
         self.screen.blit(self.score_label, (TILESIZE, 10))
         self.screen.blit(self.level_label, (WIN_WIDTH - TILESIZE * 6, 10))
         self.countdown()
@@ -132,6 +134,7 @@ class Game:
         pygame.draw.rect(self.screen, (200,0,0), (WIN_WIDTH // 2 - TILESIZE * 3, 24, TILESIZE * 6, 24))
         pygame.draw.rect(self.screen, (0,200,0), (WIN_WIDTH //2 - TILESIZE * 3, 24, ((TILESIZE * 6) - (((TILESIZE * 6)/10) * (10 - self.health))), 24))
         self.clock.tick(FPS)
+        self.current_frames += 1
         pygame.display.update()
         
 
@@ -139,6 +142,8 @@ class Game:
         self.current_map.unload_tiles()
         self.current_map = map
         self.current_map.show_tiles()
+        if self.player:
+            self.player.collision_map = self.current_map.collision_map
 
 
     def update_map(self, filepath, is_space_map):
@@ -150,26 +155,32 @@ class Game:
         self.current_map = TileMap(filepath, self.current_map_group, self.terrain_group, self.ship_group,self.rock_group, is_space_map)
         if is_space_map:
             self.current_space_map = self.current_map
+        if self.player:
+            self.player.collision_map = self.current_map.collision_map
 
     def countdown(self):
+
         if self.minutes >= 0 and self.seconds >= 0:
-            if self.milliseconds < 1000:
-                self.milliseconds += 1000
-            if self.seconds <= 60:
-                self.seconds -= 0.05
-            if self.seconds <= 0:
+            if self.milliseconds > 1000:
+                self.milliseconds = self.milliseconds % 1000
+                self.seconds -= 1
+                print(self.current_frames)
+                self.current_frames = 0
+            if self.seconds < 0:
                 self.seconds += 60
                 self.minutes -= 1
         if int(self.minutes) == -1:
             self.minutes = 0
             self.seconds = 0
             self.gameover = True
-        if self.seconds > 10:
-            time = "{}:{}".format(self.minutes, int(self.seconds))
+        if self.seconds > 9:
+            time_left = "{}:{}".format(self.minutes, int(self.seconds))
         else:
-            time = "{}:0{}".format(self.minutes, int(self.seconds))
-        self.time_label=self.main_font.render(time, True, (255, 255, 255))
-        self.milliseconds += self.clock.tick_busy_loop(60) #
+            time_left = "{}:0{}".format(self.minutes, int(self.seconds))
+        self.time_label=self.main_font.render(time_left, True, (255, 255, 255))
+        # self.milliseconds += self.clock.tick_busy_loop()
+        self.milliseconds += time.time()*1000 - self.current_time
+        self.current_time = time.time() * 1000
         self.screen.blit(self.time_label, (WIN_WIDTH//2 - TILESIZE * 1.5, WIN_HEIGHT - TILESIZE * 2))
 
     # TODO: rename
@@ -182,6 +193,8 @@ class Game:
         self.current_map.show_tiles()
         self.player.rect.x = 0
         self.player.rect.y = 0
+        if self.player:
+            self.player.collision_map = self.current_map.collision_map
 
     def main(self):
         while self.playing:

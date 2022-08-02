@@ -6,17 +6,19 @@ import random
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, game, x, y, group):
+    def __init__(self, game, x, y, group, collision_map):
 
         self.game = game
         self._layer = PLAYER_LAYER
         self.groups = group
         pygame.sprite.Sprite.__init__(self, self.groups)
 
-        self.x = x * WIN_WIDTH / 2 - 16
+        self.x = x * WIN_WIDTH / 2 - TILESIZE
         self.y = y * WIN_HEIGHT / 2
         self.width = TILESIZE * 1.5
         self.height = TILESIZE * 1.5
+
+        self.collision_map = collision_map
 
         self.x_change = 0
         self.y_change = 0
@@ -71,21 +73,26 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
         # TODO: Figure out collision
         if (keys[pygame.K_LEFT] or keys[pygame.K_a]):
-            self.x_change -= TILESIZE
-            self.facing = 'left'
-            return True
+            if (self.rect.x/TILESIZE) -1 >= 0 and self.collision_map[int(self.rect.y / TILESIZE)][int(self.rect.x / TILESIZE) - 1] == 0:
+                self.x_change -= TILESIZE
+                self.facing = 'left'
+                return True
         if (keys[pygame.K_RIGHT] or keys[pygame.K_d]):
-            self.x_change += TILESIZE
-            self.facing = 'right'
-            return True
+            if (self.rect.x/TILESIZE) +1 <= 29 and self.collision_map[int(self.rect.y / TILESIZE)][int(self.rect.x / TILESIZE) + 1] == 0:
+                self.x_change += TILESIZE
+                self.facing = 'right'
+                return True
         if (keys[pygame.K_UP] or keys[pygame.K_w]):
-            self.y_change -= TILESIZE
-            self.facing = 'up'
-            return True
+            if (self.rect.y/TILESIZE) -1 >= 0 and self.collision_map[int(self.rect.y / TILESIZE) - 1][int(self.rect.x / TILESIZE)] == 0:
+                self.y_change -= TILESIZE
+                self.facing = 'up'
+                print("PRAYER MOVED UP NOW AT ", self.rect.x, self.rect.y)
+                return True
         if (keys[pygame.K_DOWN] or keys[pygame.K_s]):
-            self.y_change += TILESIZE
-            self.facing = 'down'
-            return True
+            if (self.rect.y/TILESIZE) + 1 <= 19 and self.collision_map[int(self.rect.y / TILESIZE) + 1][int(self.rect.x / TILESIZE)] == 0:
+                self.y_change += TILESIZE
+                self.facing = 'down'
+                return True
         # TODO: REMOVE (testing purposes only, swaps between ship and player with spacebar)
         if (keys[pygame.K_SPACE]):
             self.player_is_ship = not self.player_is_ship

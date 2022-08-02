@@ -1,11 +1,14 @@
 import pygame
 import sys
 import enum
-import gc
+import time
 
 from sprites import *
 from settings import *
 from tiles import *
+
+
+
 
 class Game:
 
@@ -32,6 +35,10 @@ class Game:
         self.level_sound = pygame.mixer.Sound("assets/Sound/level.wav")
         self.level_sound = pygame.mixer.Sound("assets/Sound/level.wav")
         self.gameover_sound = pygame.mixer.Sound("assets/Sound/gameover.wav")
+        self.clock = pygame.time.Clock()
+        self.minutes = 2
+        self.seconds = 60
+        self.milliseconds = 100000
         self.main_font = pygame.font.SysFont("comicsans", 40, True, True)
 
     def run(self):
@@ -119,11 +126,11 @@ class Game:
         self.rock_group.draw(self.screen)
         self.screen.blit(self.score_label, (TILESIZE, 10))
         self.screen.blit(self.level_label, (WIN_WIDTH - TILESIZE * 6, 10))
+        self.countdown()
         if self.gameover:
             self.screen.blit(self.gameover_label, (WIN_WIDTH // 2 - 136, WIN_HEIGHT / 2 - TILESIZE * 2))
         pygame.draw.rect(self.screen, (200,0,0), (WIN_WIDTH // 2 - TILESIZE * 3, 24, TILESIZE * 6, 24))
         pygame.draw.rect(self.screen, (0,200,0), (WIN_WIDTH //2 - TILESIZE * 3, 24, ((TILESIZE * 6) - (((TILESIZE * 6)/10) * (10 - self.health))), 24))
-
         self.clock.tick(FPS)
         pygame.display.update()
         
@@ -144,6 +151,26 @@ class Game:
         if is_space_map:
             self.current_space_map = self.current_map
 
+    def countdown(self):
+        if self.minutes >= 0 and self.seconds >= 0:
+            if self.milliseconds < 1000:
+                self.milliseconds += 1000
+            if self.seconds <= 60:
+                self.seconds -= 0.05
+            if self.seconds <= 0:
+                self.seconds += 60
+                self.minutes -= 1
+        if int(self.minutes) == -1:
+            self.minutes = 0
+            self.seconds = 0
+            self.gameover = True
+        if self.seconds > 10:
+            time = "{}:{}".format(self.minutes, int(self.seconds))
+        else:
+            time = "{}:0{}".format(self.minutes, int(self.seconds))
+        self.time_label=self.main_font.render(time, True, (255, 255, 255))
+        self.milliseconds += self.clock.tick_busy_loop(60) #
+        self.screen.blit(self.time_label, (WIN_WIDTH//2 - TILESIZE * 1.5, WIN_HEIGHT - TILESIZE * 2))
 
     # TODO: rename
     def reload_space_map(self):

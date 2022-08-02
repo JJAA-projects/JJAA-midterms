@@ -76,7 +76,6 @@ class Game:
         if (keys[pygame.K_8]):
             self.reload_space_map()
 
-
     def update(self):
         self.all_sprites_group.update()
         self.current_map_group.update()
@@ -113,9 +112,14 @@ class Game:
                 self.level = 2
                 self.health = 8
 
+    def update_fps(self):
+        fps = 'FPS: ' + str(int(self.clock.get_fps()))
+        fps_text = self.main_font.render(fps, 1, pygame.Color(255, 0, 0))
+        return fps_text
 
     def draw(self):
         # TODO: Change this to load the tilemap
+        self.fps_label = self.update_fps()
         self.score_label = self.main_font.render(f"Score: {self.score}", True, (0, 255, 255))
         self.level_label = self.main_font.render(f"Level: {self.level}" , True, (0, 255, 255))
         self.gameover_label = self.main_font.render(f"GAME OVER", True, (255, 0, 0))
@@ -126,6 +130,7 @@ class Game:
         self.rock_group.draw(self.screen)
         self.screen.blit(self.score_label, (TILESIZE, 10))
         self.screen.blit(self.level_label, (WIN_WIDTH - TILESIZE * 6, 10))
+        self.screen.blit(self.fps_label, (TILESIZE, 64))
         self.countdown()
         if self.gameover:
             self.screen.blit(self.gameover_label, (WIN_WIDTH // 2 - 136, WIN_HEIGHT / 2 - TILESIZE * 2))

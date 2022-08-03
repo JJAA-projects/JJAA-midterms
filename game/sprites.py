@@ -8,7 +8,9 @@ import random
 class Player(pygame.sprite.Sprite):
     def __init__(self, game, x, y, group, collision_map):
 
+
         self.game = game
+        self.is_game_over = False
         self._layer = PLAYER_LAYER
         self.groups = group
         pygame.sprite.Sprite.__init__(self, self.groups)
@@ -72,27 +74,24 @@ class Player(pygame.sprite.Sprite):
     def movement(self):
         keys = pygame.key.get_pressed()
         # TODO: Figure out collision
-        if (keys[pygame.K_LEFT] or keys[pygame.K_a]):
-            if (self.rect.x/TILESIZE) -1 >= 0 and self.collision_map[int(self.rect.y / TILESIZE)][int(self.rect.x / TILESIZE) - 1] == 0:
-                self.x_change -= TILESIZE
-                self.facing = 'left'
-                return True
-        if (keys[pygame.K_RIGHT] or keys[pygame.K_d]):
-            if (self.rect.x/TILESIZE) +1 <= 29 and self.collision_map[int(self.rect.y / TILESIZE)][int(self.rect.x / TILESIZE) + 1] == 0:
-                self.x_change += TILESIZE
-                self.facing = 'right'
-                return True
-        if (keys[pygame.K_UP] or keys[pygame.K_w]):
-            if (self.rect.y/TILESIZE) -1 >= 0 and self.collision_map[int(self.rect.y / TILESIZE) - 1][int(self.rect.x / TILESIZE)] == 0:
-                self.y_change -= TILESIZE
-                self.facing = 'up'
-                return True
-        if (keys[pygame.K_DOWN] or keys[pygame.K_s]):
-            if (self.rect.y/TILESIZE) + 1 <= 19 and self.collision_map[int(self.rect.y / TILESIZE) + 1][int(self.rect.x / TILESIZE)] == 0:
-                self.y_change += TILESIZE
-                self.facing = 'down'
-                return True
-        # TODO: REMOVE (testing purposes only, swaps between ship and player with spacebar)
-        if (keys[pygame.K_SPACE]):
-            self.player_is_ship = not self.player_is_ship
-            return True
+        if not self.is_game_over:
+            if (keys[pygame.K_LEFT] or keys[pygame.K_a]):
+                if (self.rect.x/TILESIZE) -1 >= 0 and self.collision_map[int(self.rect.y / TILESIZE)][int(self.rect.x / TILESIZE) - 1] == 0:
+                    self.x_change -= TILESIZE
+                    self.facing = 'left'
+                    return True
+            if (keys[pygame.K_RIGHT] or keys[pygame.K_d]):
+                if (self.rect.x/TILESIZE) +1 <= 29 and self.collision_map[int(self.rect.y / TILESIZE)][int(self.rect.x / TILESIZE) + 1] == 0:
+                    self.x_change += TILESIZE
+                    self.facing = 'right'
+                    return True
+            if (keys[pygame.K_UP] or keys[pygame.K_w]):
+                if (self.rect.y/TILESIZE) -1 >= 0 and self.collision_map[int(self.rect.y / TILESIZE) - 1][int(self.rect.x / TILESIZE)] == 0:
+                    self.y_change -= TILESIZE
+                    self.facing = 'up'
+                    return True
+            if (keys[pygame.K_DOWN] or keys[pygame.K_s]):
+                if (self.rect.y/TILESIZE) + 1 <= 19 and self.collision_map[int(self.rect.y / TILESIZE) + 1][int(self.rect.x / TILESIZE)] == 0:
+                    self.y_change += TILESIZE
+                    self.facing = 'down'
+                    return True

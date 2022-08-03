@@ -86,7 +86,6 @@ class Player(pygame.sprite.Sprite):
             if (self.rect.y/TILESIZE) -1 >= 0 and self.collision_map[int(self.rect.y / TILESIZE) - 1][int(self.rect.x / TILESIZE)] == 0:
                 self.y_change -= TILESIZE
                 self.facing = 'up'
-                print("PRAYER MOVED UP NOW AT ", self.rect.x, self.rect.y)
                 return True
         if (keys[pygame.K_DOWN] or keys[pygame.K_s]):
             if (self.rect.y/TILESIZE) + 1 <= 19 and self.collision_map[int(self.rect.y / TILESIZE) + 1][int(self.rect.x / TILESIZE)] == 0:

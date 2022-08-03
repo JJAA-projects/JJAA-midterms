@@ -105,15 +105,15 @@ class Game:
                     self.score += 1
                     self.rock_group.remove(rock)
                     self.current_map.rocks.remove(rock)
-            if self.score >= 30:
-                self.gameover = True
-                self.player._layer = 1
-            elif self.score >= 20:
-                self.level = 3
-                self.health = 6
-            elif self.score >= 10:
-                self.level = 2
-                self.health = 8
+            # # if self.score >= 30:
+            # #     self.gameover = True
+            # #     self.player._layer = 1
+            # elif self.score >= 20:
+            #     self.level = 3
+            #     self.health = 6
+            # elif self.score >= 10:
+            #     self.level = 2
+            #     self.health = 8
 
 
     def draw(self):
@@ -164,7 +164,9 @@ class Game:
             if self.milliseconds > 1000:
                 self.milliseconds = self.milliseconds % 1000
                 self.seconds -= 1
-                print(self.current_frames)
+                # The below statement is used for bug testing to print the current frames per second, once per
+                # second (to test lag). Could be implemented to blit to the screen to show the player this information.
+                # print(self.current_frames)
                 self.current_frames = 0
             if self.seconds < 0:
                 self.seconds += 60

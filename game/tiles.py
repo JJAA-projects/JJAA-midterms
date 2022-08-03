@@ -37,12 +37,12 @@ class Rock(pygame.sprite.Sprite):
         super(Rock, self).__init__()
         rock_group.add(self)
         # TODO: Load in rock sprite once rock mining functionality works
-        self.image = pygame.transform.scale(pygame.image.load("assets/temp_ship.png"), (TILESIZE, TILESIZE))
+        self.image = pygame.transform.scale(pygame.image.load("assets/crypto_rock.png"), (TILESIZE, TILESIZE))
         self._layer = 3
         self.rect = self.image.get_rect()
         # self.mask = pygame.mask.from_surface(self.image)
         self.rect.x, self.rect.y = x, y
-        print("ROCK AT ", self.rect.x, self.rect.y, " IE. ", )
+
 
     def collide(self, player):
         return (self.rect.x == player.rect.x and self.rect.y == player.rect.y)
@@ -154,6 +154,11 @@ class TileMap:
 
         tile_list = [file for file in os.listdir("assets/MapTiles")]
         tile_list.sort()
+        # If other filetypes appear and mess up the alphabetization of the list they can be added to this statement
+        # and it can be changed to a while loop to clear all of them. For now .DS_Store is the only problematic one.
+        if tile_list[0] == ".DS_Store":
+            tile_list.pop(0)
+
         if not self.is_space_map:
             self.collision_map = []
         for row in zone:
@@ -171,7 +176,7 @@ class TileMap:
             if not self.is_space_map:
                 self.collision_map.append(collision_row)
         if self.is_space_map:
-            print(self.collision_map)
+            pass
         self.map_w, self.map_h = x * self.tile_size, y * self.tile_size
         return tiles
 
@@ -181,7 +186,6 @@ def collide(obj1, obj2):
     offset_x = obj2.rect.x - obj1.rect.x
     offset_y = obj2.rect.y - obj1.rect.y
     if obj1.mask.overlap(obj2.mask, (offset_x, offset_y)) != None:
-        print("collided")
         return True
 
 

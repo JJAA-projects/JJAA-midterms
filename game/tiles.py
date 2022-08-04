@@ -1,6 +1,6 @@
 import random
 import pygame, csv, os
-from settings import *
+from game.settings import *
 
 
 class Tile(pygame.sprite.Sprite):  # inherits from built in pygame Sprite class

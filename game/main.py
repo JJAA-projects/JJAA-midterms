@@ -4,10 +4,16 @@ import pygame
 import sys
 import enum
 import time
+import random
 
-from game.sprites import Player
-from game.settings import WIN_WIDTH, WIN_HEIGHT, TILESIZE, FPS, ACTION_TIMER, ASTEROID_COUNT, ROCK_SPAWN_PERCENT, PLAYER_LAYER, GROUND_LAYER
-from game.tiles import TileMap, Tile, Asteroid
+try:
+    from sprites import Player
+    from settings import WIN_WIDTH, WIN_HEIGHT, TILESIZE, FPS, ACTION_TIMER, ASTEROID_COUNT, ROCK_SPAWN_PERCENT, PLAYER_LAYER, GROUND_LAYER
+    from tiles import TileMap, Tile, Asteroid
+except:
+    from game.sprites import Player
+    from game.settings import WIN_WIDTH, WIN_HEIGHT, TILESIZE, FPS, ACTION_TIMER, ASTEROID_COUNT, ROCK_SPAWN_PERCENT, PLAYER_LAYER, GROUND_LAYER
+    from game.tiles import TileMap, Tile, Asteroid
 
 
 
@@ -204,7 +210,7 @@ class Game:
 
     def make_sound(self):
         self.game_intro_sound = pygame.mixer.Sound("assets/Sound/8Bit Retro Logo.wav")
-        self.game_intro_sound.set_volume(0.1)
+        self.game_intro_sound.set_volume(0.01)
         self.score_sound = pygame.mixer.Sound("assets/Sound/score.wav")
         self.score_sound.set_volume(0.1)
         self.asteroid_sound = pygame.mixer.Sound("assets/Sound/asteroid.wav")
@@ -234,8 +240,6 @@ class Game:
             if self.milliseconds > 1000:
                 self.milliseconds = self.milliseconds % 1000
                 self.seconds -= 1
-                if PRINT_FPS:
-                    print(self.current_frames)
                 self.current_frames = 0
                 if not self.player.player_is_ship:
                     self.health -= 1

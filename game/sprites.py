@@ -1,8 +1,12 @@
 from turtle import window_height, window_width
 import pygame
-from game.settings import *
 import math
 import random
+
+try:
+    from settings import *
+except:
+    from game.settings import *
 
 
 class Player(pygame.sprite.Sprite):

@@ -90,6 +90,18 @@ class Game:
         if self.player.player_is_ship:
             for terrain in self.terrain_group:
                 if terrain.collide(self.player):
+                    if self.player.facing == 'right':
+                        self.player.last_pos_x = self.player.rect.x - TILESIZE
+                        self.player.last_pos_y = self.player.rect.y
+                    if self.player.facing == 'left':
+                        self.player.last_pos_x = self.player.rect.x + TILESIZE
+                        self.player.last_pos_y = self.player.rect.y
+                    if self.player.facing == 'up':
+                        self.player.last_pos_y = self.player.rect.y + TILESIZE
+                        self.player.last_pos_x = self.player.rect.x
+                    if self.player.facing == 'down':
+                        self.player.last_pos_y = self.player.rect.y - TILESIZE
+                        self.player.last_pos_x = self.player.rect.x
                     self.asteroid_sound.play()
                     self.switch_map(terrain.map)
                     self.player.player_is_ship = False
@@ -102,8 +114,9 @@ class Game:
                     self.asteroid_sound.play()
                     self.reload_space_map()
                     self.player.player_is_ship = True
-                    self.player.rect.x = WIN_WIDTH//2 - TILESIZE
-                    self.player.rect.y = WIN_HEIGHT//2 - TILESIZE
+                    self.player.rect.x = self.player.last_pos_x
+                    self.player.rect.y = self.player.last_pos_y
+
             for idx, rock in enumerate(self.rock_group):
                 if rock.collide(self.player):
                     self.score_sound.play()
@@ -162,17 +175,17 @@ class Game:
 
     def make_sound(self):
         self.game_intro_sound = pygame.mixer.Sound("assets/Sound/8Bit Retro Logo.wav")
-        self.game_intro_sound.set_volume(0.2)
+        self.game_intro_sound.set_volume(0.1)
         self.score_sound = pygame.mixer.Sound("assets/Sound/score.wav")
-        self.score_sound.set_volume(0.2)
+        self.score_sound.set_volume(0.1)
         self.asteroid_sound = pygame.mixer.Sound("assets/Sound/asteroid.wav")
-        self.asteroid_sound.set_volume(0.2)
+        self.asteroid_sound.set_volume(0.1)
         self.level_sound = pygame.mixer.Sound("assets/Sound/level.wav")
-        self.level_sound.set_volume(0.2)
+        self.level_sound.set_volume(0.1)
         self.level_sound = pygame.mixer.Sound("assets/Sound/level.wav")
-        self.level_sound.set_volume(0.2)
+        self.level_sound.set_volume(0.1)
         self.gameover_sound = pygame.mixer.Sound("assets/Sound/gameover.wav")
-        self.gameover_sound.set_volume(0.2)
+        self.gameover_sound.set_volume(0.1)
 
     def update_map(self, filepath, is_space_map):
         self.current_map_group.empty()

@@ -1,12 +1,13 @@
+import os
 from re import T
 import pygame
 import sys
 import enum
 import time
 
-from sprites import *
-from settings import *
-from tiles import *
+from game.sprites import Player
+from game.settings import WIN_WIDTH, WIN_HEIGHT, TILESIZE, FPS, ACTION_TIMER, ASTEROID_COUNT, ROCK_SPAWN_PERCENT, PLAYER_LAYER, GROUND_LAYER
+from game.tiles import TileMap, Tile, Asteroid
 
 
 
@@ -40,6 +41,14 @@ class Game:
         self.current_frames = 0
         self.current_time = time.time()*1000
         self.start = False
+        self.all_spacemaps = os.listdir("assets/MapsSpace")
+        self.all_spacemaps.sort()
+        if self.all_spacemaps[0] == ".DS_Store":
+            self.all_spacemaps.pop(0)
+        self.all_asteroidmaps = os.listdir("assets/MapsAsteroid")
+        self.all_asteroidmaps.sort()
+        if self.all_asteroidmaps[0] == ".DS_Store":
+            self.all_asteroidmaps.pop(0)
 
     def run(self):
         """run game"""
@@ -50,8 +59,9 @@ class Game:
         self.rocks_group = pygame.sprite.LayeredUpdates()
         self.ship_group = pygame.sprite.LayeredUpdates()
         self.rock_group = pygame.sprite.LayeredUpdates()
+        self.worm_group = pygame.sprite.LayeredUpdates()
         # TODO: This is just a testmap for the first space map
-        self.update_map("game/TestSpaceMap01.csv", True)
+        self.update_map("assets/MapsSpace/" + self.all_spacemaps[random.randint(0, len(self.all_spacemaps) - 1)], True)
         self.current_space_map = self.current_map
         self.switch_map(self.current_map)
         self.blocks = pygame.sprite.LayeredUpdates()
@@ -85,10 +95,19 @@ class Game:
         self.all_sprites_group.update()
         self.current_map_group.update()
         self.terrain_group.update()
+        self.worm_group.update()
+        if self.gameover:
+            self.player.is_game_over = True
+        if self.health <= 0:
+            self.gameover = True
         if not self.start:
             self.game_intro_sound.play()
         if self.player.player_is_ship:
+            self.health = 10
+            wormhole_ready = True
             for terrain in self.terrain_group:
+                if len(terrain.map.rocks) > 2:
+                    wormhole_ready = False
                 if terrain.collide(self.player):
                     if self.player.facing == 'right':
                         self.player.last_pos_x = self.player.rect.x - TILESIZE
@@ -108,6 +127,15 @@ class Game:
                     self.player.facing = 'down'
                     self.player.rect.x = WIN_WIDTH//2 - TILESIZE
                     self.player.rect.y = TILESIZE * 5
+            if wormhole_ready and not self.current_map.wormhole:
+                self.current_map.generate_wormhole(self.worm_group)
+            if self.current_map.wormhole:
+                if self.current_map.wormhole.collide(self.player):
+                    new_map = random.randint(0, len(self.all_spacemaps) - 1)
+                    self.update_map("assets/MapsSpace/"+self.all_spacemaps[new_map], True)
+                    self.worm_group.empty()
+                    self.reload_space_map()
+                    self.level += 1
         else:
             for ship in self.ship_group:
                 if ship.collide(self.player):
@@ -120,7 +148,7 @@ class Game:
             for idx, rock in enumerate(self.rock_group):
                 if rock.collide(self.player):
                     self.score_sound.play()
-                    self.score += 1
+                    self.score += self.level
                     self.rock_group.remove(rock)
                     self.current_map.rocks.remove(rock)
             # # if self.score >= 30:
@@ -145,10 +173,11 @@ class Game:
             self.all_sprites_group.draw(self.screen)
             self.rock_group.draw(self.screen)
             self.ship_group.draw(self.screen)
-            self.countdown()
+            if self.player.player_is_ship:
+                self.worm_group.draw(self.screen)
             if self.gameover:
                 self.screen.blit(self.gameover_label, (WIN_WIDTH // 2 - 136, WIN_HEIGHT / 2 - TILESIZE * 2))
-                self.player.is_game_over = True
+            self.countdown()
             pygame.draw.rect(self.screen, (200,0,0), (WIN_WIDTH // 2 - TILESIZE * 3, 24, TILESIZE * 6, 24))
             pygame.draw.rect(self.screen, (0,200,0), (WIN_WIDTH //2 - TILESIZE * 3, 24, ((TILESIZE * 6) - (((TILESIZE * 6)/10) * (10 - self.health))), 24))
         else:
@@ -193,7 +222,7 @@ class Game:
         self.ship_group.empty()
         self.rock_group.empty()
         self.current_map = None
-        self.current_map = TileMap(filepath, self.current_map_group, self.terrain_group, self.ship_group,self.rock_group, is_space_map)
+        self.current_map = TileMap(filepath, self.current_map_group, self.terrain_group, self.ship_group,self.rock_group, self.all_asteroidmaps, is_space_map)
         if is_space_map:
             self.current_space_map = self.current_map
         if self.player:
@@ -205,10 +234,11 @@ class Game:
             if self.milliseconds > 1000:
                 self.milliseconds = self.milliseconds % 1000
                 self.seconds -= 1
-                # The below statement is used for bug testing to print the current frames per second, once per
-                # second (to test lag). Could be implemented to blit to the screen to show the player this information.
-                # print(self.current_frames)
+                if PRINT_FPS:
+                    print(self.current_frames)
                 self.current_frames = 0
+                if not self.player.player_is_ship:
+                    self.health -= 1
             if self.seconds < 0:
                 self.seconds += 60
                 self.minutes -= 1

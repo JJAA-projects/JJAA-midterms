@@ -55,6 +55,7 @@ class Player(pygame.sprite.Sprite):
         self.image = self.miner_image_set['down']
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = self.x, self.y
+        self.last_pos_x, self.last_pos_y = 0, 0
         self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):

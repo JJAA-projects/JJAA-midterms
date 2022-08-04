@@ -115,6 +115,18 @@ class Game:
                 if len(terrain.map.rocks) > 2:
                     wormhole_ready = False
                 if terrain.collide(self.player):
+                    if self.player.facing == 'right':
+                        self.player.last_pos_x = self.player.rect.x - TILESIZE
+                        self.player.last_pos_y = self.player.rect.y
+                    if self.player.facing == 'left':
+                        self.player.last_pos_x = self.player.rect.x + TILESIZE
+                        self.player.last_pos_y = self.player.rect.y
+                    if self.player.facing == 'up':
+                        self.player.last_pos_y = self.player.rect.y + TILESIZE
+                        self.player.last_pos_x = self.player.rect.x
+                    if self.player.facing == 'down':
+                        self.player.last_pos_y = self.player.rect.y - TILESIZE
+                        self.player.last_pos_x = self.player.rect.x
                     self.asteroid_sound.play()
                     self.switch_map(terrain.map)
                     self.player.player_is_ship = False
@@ -136,8 +148,9 @@ class Game:
                     self.asteroid_sound.play()
                     self.reload_space_map()
                     self.player.player_is_ship = True
-                    self.player.rect.x = WIN_WIDTH//2 - TILESIZE
-                    self.player.rect.y = WIN_HEIGHT//2 - TILESIZE
+                    self.player.rect.x = self.player.last_pos_x
+                    self.player.rect.y = self.player.last_pos_y
+
             for idx, rock in enumerate(self.rock_group):
                 if rock.collide(self.player):
                     self.score_sound.play()

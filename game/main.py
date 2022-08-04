@@ -162,11 +162,17 @@ class Game:
 
     def make_sound(self):
         self.game_intro_sound = pygame.mixer.Sound("assets/Sound/8Bit Retro Logo.wav")
+        self.game_intro_sound.set_volume(0.2)
         self.score_sound = pygame.mixer.Sound("assets/Sound/score.wav")
+        self.score_sound.set_volume(0.2)
         self.asteroid_sound = pygame.mixer.Sound("assets/Sound/asteroid.wav")
+        self.asteroid_sound.set_volume(0.2)
         self.level_sound = pygame.mixer.Sound("assets/Sound/level.wav")
+        self.level_sound.set_volume(0.2)
         self.level_sound = pygame.mixer.Sound("assets/Sound/level.wav")
+        self.level_sound.set_volume(0.2)
         self.gameover_sound = pygame.mixer.Sound("assets/Sound/gameover.wav")
+        self.gameover_sound.set_volume(0.2)
 
     def update_map(self, filepath, is_space_map):
         self.current_map_group.empty()

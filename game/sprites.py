@@ -1,6 +1,6 @@
 from turtle import window_height, window_width
 import pygame
-from settings import *
+from game.settings import *
 import math
 import random
 

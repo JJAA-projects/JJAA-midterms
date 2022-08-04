@@ -4,9 +4,9 @@ import sys
 import enum
 import time
 
-from sprites import *
-from settings import *
-from tiles import *
+from game.sprites import Player
+from game.settings import WIN_WIDTH, WIN_HEIGHT, TILESIZE, FPS, ACTION_TIMER, ASTEROID_COUNT, ROCK_SPAWN_PERCENT, PLAYER_LAYER, GROUND_LAYER
+from game.tiles import TileMap, Tile, Asteroid
 
 
 

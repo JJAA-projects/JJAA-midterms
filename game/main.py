@@ -22,7 +22,7 @@ class Game:
 
     def __init__(self):
         pygame.init()
-        pygame.display.set_caption("Crypto Astroneer")
+        pygame.display.set_caption("Astro Explorer")
         self.screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
         self.clock = pygame.time.Clock()
         self.font = pygame.font.get_default_font()  # can be customized

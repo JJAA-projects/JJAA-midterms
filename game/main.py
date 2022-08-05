@@ -22,7 +22,7 @@ class Game:
 
     def __init__(self):
         pygame.init()
-        pygame.display.set_caption("Crypto Astroneer")
+        pygame.display.set_caption("Astro Explorer")
         self.screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
         self.clock = pygame.time.Clock()
         self.font = pygame.font.get_default_font()  # can be customized
@@ -204,7 +204,7 @@ class Game:
     def make_labels(self):
         self.score_label = self.main_font.render(f"Score: {self.score}", True, (0, 255, 255))
         self.level_label = self.main_font.render(f"Level: {self.level}" , True, (0, 255, 255))
-        self.game_title = self.game_font.render(f"SPACE \t PIONEERS" , True, (140, 255, 140))
+        self.game_title = self.game_font.render(f"ASTRO \t EXPLORER" , True, (140, 255, 140))
         self.start_intro = self.game_font_2.render(f"Press the space key play the game" , True, (255, 255, 255))
         self.gameover_label = self.main_font.render(f"GAME OVER", True, (255, 0, 0))
 

@@ -74,6 +74,7 @@ class Game:
         self.enemies = pygame.sprite.LayeredUpdates()
         self.attacks = pygame.sprite.LayeredUpdates()
         self.player = Player(self, 1, 1, self.all_sprites_group, self.current_map.collision_map)
+        self.player.rect.x, self.player.rect.y = 0,0
         self.ship_group.empty()
         self.rock_group.empty()
 
@@ -85,12 +86,6 @@ class Game:
                 self.running = False
         # TODO: remove. Only for testing purposes
         keys = pygame.key.get_pressed()
-        if (keys[pygame.K_0]):
-            self.update_map("game/Testmap02.csv", False)
-        if (keys[pygame.K_9]):
-            self.update_map("game/Testmap03.csv", True)
-        if (keys[pygame.K_8]):
-            self.reload_space_map()
         if keys[pygame.K_SPACE]:
             self.start = True
 
@@ -133,9 +128,10 @@ class Game:
                     self.player.facing = 'down'
                     self.player.rect.x = WIN_WIDTH//2 - TILESIZE
                     self.player.rect.y = TILESIZE * 5
-            if wormhole_ready and not self.current_map.wormhole:
+            if wormhole_ready and not self.current_map.wormhole and not self.current_space_map.wormhole:
                 self.current_map.generate_wormhole(self.worm_group)
             if self.current_map.wormhole:
+                self.current_map.wormhole.spin()
                 if self.current_map.wormhole.collide(self.player):
                     new_map = random.randint(0, len(self.all_spacemaps) - 1)
                     self.update_map("assets/MapsSpace/"+self.all_spacemaps[new_map], True)
@@ -171,8 +167,6 @@ class Game:
     def draw(self):
         # TODO: Change this to load the tilemap
         self.current_map_group.draw(self.screen)
-        self.screen.blit(self.score_label, (TILESIZE, 10))
-        self.screen.blit(self.level_label, (WIN_WIDTH - TILESIZE * 6, 10))
         if self.start:
             self.game_intro_sound = None
             self.terrain_group.draw(self.screen)
@@ -189,6 +183,8 @@ class Game:
         else:
             self.screen.blit(self.game_title, (WIN_WIDTH //2 - TILESIZE * 9, WIN_HEIGHT //2 - TILESIZE * 3))
             self.screen.blit(self.start_intro, (WIN_WIDTH //2 - TILESIZE * 12, WIN_HEIGHT - TILESIZE * 3))
+        self.screen.blit(self.score_label, (TILESIZE, 10))
+        self.screen.blit(self.level_label, (WIN_WIDTH - TILESIZE * 7, 10))
         self.clock.tick(FPS)
         self.current_frames += 1
         pygame.display.update()
@@ -196,6 +192,7 @@ class Game:
 
     def switch_map(self, map):
         self.current_map.unload_tiles()
+        self.current_map_group.empty()
         self.current_map = map
         self.current_map.show_tiles()
         if self.player:
@@ -242,7 +239,7 @@ class Game:
                 self.seconds -= 1
                 self.current_frames = 0
                 if not self.player.player_is_ship:
-                    self.health -= 1
+                    self.health -= 0.5
             if self.seconds < 0:
                 self.seconds += 60
                 self.minutes -= 1

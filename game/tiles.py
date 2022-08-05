@@ -55,12 +55,39 @@ class Wormhole(pygame.sprite.Sprite):
     def __init__(self, filepath, x, y, worm_group):
         super(Wormhole, self).__init__()
         worm_group.add(self)
+        self.filepath = filepath
         self.group = worm_group
-        self.image = pygame.transform.scale(pygame.image.load(filepath, 'wormhole'), (TILESIZE*4, TILESIZE*4))
+        self.image = pygame.transform.scale(pygame.image.load(self.filepath, 'wormhole'), (TILESIZE*4, TILESIZE*4))
         self._layer = 4
         self.rect = self.image.get_rect()
+        self.rect.height, self.rect.width = self.rect.height * 2, self.rect.width * 2
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x, self.rect.y = x, y
+        self.x, self.y = x,y
+        self.rotation = 0
+        self.testx, self.testy = self.rect.x, self.rect.y
+        self.counter = 0
+
+    def spin(self):
+        self.counter += 1
+        self.image = pygame.transform.rotate(self.image, 1)
+        self.rect.x -= 2
+        self.rect.y -= 2
+        if self.counter >= 35:
+            self.rect.x, self.rect.y = self.x, self.y
+            self.rotation += self.counter
+            self.rotation = self.rotation % 360
+            self.counter = 0
+            self.image = pygame.transform.rotate(pygame.transform.scale(pygame.image.load(self.filepath, 'wormhole'), (TILESIZE * 4, TILESIZE * 4)), self.rotation)
+
+
+
+
+    def rot_center(self, image, angle, x, y):
+        rotated_image = pygame.transform.rotate(image, angle)
+        new_rect = rotated_image.get_rect(center=image.get_rect(center=(x, y)).center)
+
+        return new_rect
 
     def collide(self, player):
         return collide(self, player)
@@ -197,7 +224,7 @@ class TileMap:
         return tiles
 
     def generate_wormhole(self, worm_group):
-        new_wormhole = Wormhole("assets/temp_ship.png", TILESIZE, (WIN_HEIGHT/2)-(TILESIZE*2), worm_group)
+        new_wormhole = Wormhole("assets/Wormhole3.png", TILESIZE, (WIN_HEIGHT/2)-(TILESIZE*2), worm_group)
         worm_group.add(new_wormhole)
         self.wormhole = new_wormhole
         # (WIN_WIDTH/2)-(TILESIZE*2)

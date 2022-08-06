@@ -27,7 +27,7 @@ except:
 
 class Game:
 
-    def __init__(self)  -> None:
+    def __init__(self) -> None:
         pygame.init()
         pygame.display.set_caption("Astro Explorer")
         self.screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
@@ -72,7 +72,6 @@ class Game:
         self.ship_group = pygame.sprite.LayeredUpdates()
         self.rock_group = pygame.sprite.LayeredUpdates()
         self.worm_group = pygame.sprite.LayeredUpdates()
-        # TODO: This is just a testmap for the first space map
         self.update_map("assets/MapsSpace/" + self.all_spacemaps[random.randint(0, len(self.all_spacemaps) - 1)], True)
         self.current_space_map = self.current_map
         self.switch_map(self.current_map)
@@ -90,11 +89,9 @@ class Game:
             if event.type == pygame.QUIT:
                 self.playing = False
                 self.running = False
-        # TODO: remove. Only for testing purposes
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
             self.start = True
-
 
     def update(self) -> None:
         self.make_labels()
@@ -160,7 +157,6 @@ class Game:
                     self.rock_group.remove(rock)
                     self.current_map.rocks.remove(rock)
 
-
     def draw(self) -> None:
         self.current_map_group.draw(self.screen)
         if self.start:
@@ -185,7 +181,6 @@ class Game:
         self.clock.tick(FPS)
         self.current_frames += 1
         pygame.display.update()
-        
 
     def switch_map(self, map) -> None:
         self.current_map.unload_tiles()
@@ -236,7 +231,7 @@ class Game:
                 self.seconds -= 1
                 self.current_frames = 0
                 if not self.player.player_is_ship:
-                    self.health -= 0.5
+                    self.health -= (1/3)
             if self.seconds < 0:
                 self.seconds += 60
                 self.minutes -= 1

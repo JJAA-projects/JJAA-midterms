@@ -17,6 +17,11 @@ except:
     from game.tiles import TileMap, Tile, Asteroid
     from assets.Font import *
 
+try:
+    from crypto import get_btc_price
+except:
+    from game.crypto import get_btc_price
+
 
 
 
@@ -31,8 +36,6 @@ class Game:
         self.running: bool = True
         self.playing: bool = False
         self.gameover: bool = False
-        # TODO: BOOL for titlescreen. Stop all playerfunction and don't render player while this is true. Set to
-        #  false when player starts the game
         self.player: any = None
         self.current_map: any = None
         self.current_space_map: any = None
@@ -57,6 +60,7 @@ class Game:
         self.all_asteroidmaps.sort()
         if self.all_asteroidmaps[0] == ".DS_Store":
             self.all_asteroidmaps.pop(0)
+        self.btc = get_btc_price()
 
     def run(self) -> None:
         """run game"""
@@ -169,6 +173,7 @@ class Game:
                 self.worm_group.draw(self.screen)
             if self.gameover:
                 self.screen.blit(self.gameover_label, (WIN_WIDTH // 2 - 136, WIN_HEIGHT / 2 - TILESIZE * 2))
+                self.screen.blit(self.rocks_in_btc, (TILESIZE * 2, WIN_HEIGHT / 2 + TILESIZE * 4))
             self.countdown()
             pygame.draw.rect(self.screen, (200,0,0), (WIN_WIDTH // 2 - TILESIZE * 3, 24, TILESIZE * 6, 24))
             pygame.draw.rect(self.screen, (0,200,0), (WIN_WIDTH //2 - TILESIZE * 3, 24, ((TILESIZE * 6) - (((TILESIZE * 6)/10) * (10 - self.health))), 24))
@@ -196,6 +201,7 @@ class Game:
         self.game_title = self.game_font.render(f"ASTRO \t EXPLORER" , True, (140, 255, 140))
         self.start_intro = self.game_font_2.render(f"Press the space key play the game" , True, (255, 255, 255))
         self.gameover_label = self.main_font.render(f"GAME OVER", True, (255, 0, 0))
+        self.rocks_in_btc = self.game_font_2.render(f"Total Rocks: {self.score} Price in BTC: {self.score * self.btc}", True, (180, 255, 180))
 
     def make_sound(self) -> None:
         self.game_intro_sound = pygame.mixer.Sound("assets/Sound/8Bit Retro Logo.wav")
@@ -247,7 +253,6 @@ class Game:
         self.current_time = time.time() * 1000
         self.screen.blit(self.time_label, (WIN_WIDTH//2 - TILESIZE * 1.5, WIN_HEIGHT - TILESIZE * 2))
 
-    # TODO: rename
     def reload_space_map(self) -> None:
         self.current_map_group.empty()
         self.terrain_group.empty()

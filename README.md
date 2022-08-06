@@ -10,7 +10,7 @@ Once you collect most of the rocks on all the asteroids, a wormhole will open up
 
 Good luck space explorers!
 
-## Screents
+## Screens
 
 ### Welcome Screen
 

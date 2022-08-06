@@ -7,26 +7,26 @@ except:
     from game.settings import *
 
 
-class Tile(pygame.sprite.Sprite):  # inherits from built in pygame Sprite class
+class Tile(pygame.sprite.Sprite):  
 
-    def __init__(self, filepath, x, y, group):
+    def __init__(self, filepath, x, y, group) -> None:
         super(Tile, self).__init__()
         group.add(self)
         self.group = group
         self.image = pygame.transform.scale(pygame.image.load(filepath, 'tile'), (TILESIZE, TILESIZE))
-        self._layer = 2
+        self._layer: int = 2
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = x, y
 
 
 class Asteroid(pygame.sprite.Sprite):
 
-    def __init__(self, filepath, mappath, x, y, terrain_group, tile_group, ship_group, rock_group, all_asteroidmaps):
+    def __init__(self, filepath, mappath, x, y, terrain_group, tile_group, ship_group, rock_group, all_asteroidmaps) -> None:
         super(Asteroid, self).__init__()
         terrain_group.add(self)
         self.group = tile_group
         self.image = pygame.transform.scale(pygame.image.load(filepath, 'asteroid'), (TILESIZE*2, TILESIZE*2))
-        self._layer = 3
+        self._layer: int = 3
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x, self.rect.y = x, y
@@ -37,14 +37,12 @@ class Asteroid(pygame.sprite.Sprite):
 
 class Rock(pygame.sprite.Sprite):
 
-    def __init__(self, x, y, rock_group):
+    def __init__(self, x, y, rock_group) -> None:
         super(Rock, self).__init__()
         rock_group.add(self)
-        # TODO: Load in rock sprite once rock mining functionality works
         self.image = pygame.transform.scale(pygame.image.load("assets/crypto_rock.png"), (TILESIZE, TILESIZE))
-        self._layer = 3
+        self._layer: int = 3
         self.rect = self.image.get_rect()
-        # self.mask = pygame.mask.from_surface(self.image)
         self.rect.x, self.rect.y = x, y
 
     def collide(self, player):
@@ -52,23 +50,23 @@ class Rock(pygame.sprite.Sprite):
 
 class Wormhole(pygame.sprite.Sprite):
 
-    def __init__(self, filepath, x, y, worm_group):
+    def __init__(self, filepath, x, y, worm_group) -> None:
         super(Wormhole, self).__init__()
         worm_group.add(self)
         self.filepath = filepath
         self.group = worm_group
         self.image = pygame.transform.scale(pygame.image.load(self.filepath, 'wormhole'), (TILESIZE*4, TILESIZE*4))
-        self._layer = 4
+        self._layer: int = 4
         self.rect = self.image.get_rect()
         self.rect.height, self.rect.width = self.rect.height * 2, self.rect.width * 2
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x, self.rect.y = x, y
         self.x, self.y = x,y
-        self.rotation = 0
+        self.rotation: int = 0
         self.testx, self.testy = self.rect.x, self.rect.y
-        self.counter = 0
+        self.counter: int = 0
 
-    def spin(self):
+    def spin(self) -> None:
         self.counter += 1
         self.image = pygame.transform.rotate(self.image, 1)
         self.rect.x -= 2
@@ -79,9 +77,6 @@ class Wormhole(pygame.sprite.Sprite):
             self.rotation = self.rotation % 360
             self.counter = 0
             self.image = pygame.transform.rotate(pygame.transform.scale(pygame.image.load(self.filepath, 'wormhole'), (TILESIZE * 4, TILESIZE * 4)), self.rotation)
-
-
-
 
     def rot_center(self, image, angle, x, y):
         rotated_image = pygame.transform.rotate(image, angle)
@@ -94,12 +89,12 @@ class Wormhole(pygame.sprite.Sprite):
 
 class ParkSpaceShip(pygame.sprite.Sprite):
 
-    def __init__(self, filepath, x, y, ship_group):
+    def __init__(self, filepath, x, y, ship_group) -> None:
         super(ParkSpaceShip, self).__init__()
         ship_group.add(self)
          # TODO: Load in space ship sprite once rock mining functionality works
         self.image = pygame.transform.scale(pygame.image.load("assets/ShipUpStill.png"), (TILESIZE * 1.5, TILESIZE * 1.5))
-        self._layer = 8
+        self._layer: int = 8
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x, self.rect.y = x, y
@@ -109,7 +104,7 @@ class ParkSpaceShip(pygame.sprite.Sprite):
 
 class TileMap:
 
-    def __init__(self, filename, tile_group, terrain_group, ship_group, rock_group, all_asteroidmaps, is_space_map):
+    def __init__(self, filename, tile_group, terrain_group, ship_group, rock_group, all_asteroidmaps, is_space_map) -> None:
         self.is_space_map = is_space_map
         self.tile_group = tile_group
         self.terrain_group = terrain_group
@@ -117,12 +112,10 @@ class TileMap:
         self.rock_group = rock_group
         self.tile_size = TILESIZE
         self.start_x, self.start_y = 0, 0
-        # TODO: below list may prevent garbage collection of sprites
         self.collision_map = [[0 for x in range(30)] for y in range(20)]
         self.tiles = self.load_tiles(filename)
         self.ships = self.generate_ship()
         self.rocks = self.generate_rock()
-        # print(self.tiles[0], type(self.tiles[0]), "TileMAP print at init typeof tiles[0]")
         self.map_w, self.map_h = WIN_WIDTH, WIN_HEIGHT
         self.wormhole = None
         self.all_asteroidmaps = all_asteroidmaps
@@ -133,12 +126,10 @@ class TileMap:
     def read_csv(self, filename):
         """opens and reads csv file, appends rows of integers to list, returns the list"""
         zone = []
-
         with open(os.path.join(filename)) as data:
             data = csv.reader(data, delimiter=',')
             for row in data:
                 zone.append(list(row))
-
             return zone
 
     def show_tiles(self):
@@ -168,8 +159,6 @@ class TileMap:
             terrain.append(Asteroid("assets/MapTiles/31zAstDebris03.png", "assets/MapsAsteroid/"+self.all_asteroidmaps[random.randint(0,len(self.all_asteroidmaps)-1)], random.randrange(TILESIZE, TILESIZE * 15), random.randrange(TILESIZE * 10, TILESIZE *18 ), self.terrain_group, self.tile_group, self.ship_group, self.rock_group, self.all_asteroidmaps))
             terrain.append(Asteroid("assets/MapTiles/31zAstDebris03.png", "assets/MapsAsteroid/"+self.all_asteroidmaps[random.randint(0,len(self.all_asteroidmaps)-1)], random.randrange(TILESIZE * 16, TILESIZE * 28),random.randrange(TILESIZE * 10, TILESIZE * 18), self.terrain_group, self.tile_group, self.ship_group, self.rock_group, self.all_asteroidmaps))
         return terrain
-        pass
-
 
     def generate_ship(self):
         ship = []
@@ -190,15 +179,11 @@ class TileMap:
     def load_tiles(self, filename):
         """populates tile sprites to 2D grid and returns it"""
         tiles = []
-
         zone = self.read_csv(filename)
-
         x, y = 0, 0
 
         tile_list = [file for file in os.listdir("assets/MapTiles")]
         tile_list.sort()
-        # If other filetypes appear and mess up the alphabetization of the list they can be added to this statement
-        # and it can be changed to a while loop to clear all of them. For now .DS_Store is the only problematic one.
         if tile_list[0] == ".DS_Store":
             tile_list.pop(0)
 
@@ -223,13 +208,10 @@ class TileMap:
         self.map_w, self.map_h = x * self.tile_size, y * self.tile_size
         return tiles
 
-    def generate_wormhole(self, worm_group):
+    def generate_wormhole(self, worm_group) -> None:
         new_wormhole = Wormhole("assets/Wormhole3.png", TILESIZE, (WIN_HEIGHT/2)-(TILESIZE*2), worm_group)
         worm_group.add(new_wormhole)
         self.wormhole = new_wormhole
-        # (WIN_WIDTH/2)-(TILESIZE*2)
-
-
 
 def collide(obj1, obj2):
     offset_x = obj2.rect.x - obj1.rect.x

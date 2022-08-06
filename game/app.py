@@ -59,14 +59,13 @@ class Ship(Component):
 
     def collision(self, obj):
         return collide(self, obj)
-        
 
     def rotate_img(self, angle):
         self.angle = angle
 
-
     def render(self):
         pass
+
 
 class Asteroid(Component):
     def __init__(self, x, y, img_path):
@@ -79,6 +78,7 @@ class Asteroid(Component):
             os.path.join("assets", img_path)), (96, 96))
         # self.facing = 0
         self.mask = pygame.mask.from_surface(self.img)
+
 
 def collide(obj1, obj2):
     offset_x = obj2.x - obj1.x

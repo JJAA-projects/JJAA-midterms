@@ -9,25 +9,26 @@ import typing
 
 try:
     from sprites import *
-    from settings import WIN_WIDTH, WIN_HEIGHT, TILESIZE, FPS, ACTION_TIMER, ASTEROID_COUNT, ROCK_SPAWN_PERCENT, PLAYER_LAYER, GROUND_LAYER
+    from settings import WIN_WIDTH, WIN_HEIGHT, TILESIZE, FPS, ACTION_TIMER, ASTEROID_COUNT, ROCK_SPAWN_PERCENT, \
+        PLAYER_LAYER, GROUND_LAYER
     from tiles import TileMap, Tile, Asteroid
-except:
+except ImportError:
     from game.sprites import Player
-    from game.settings import WIN_WIDTH, WIN_HEIGHT, TILESIZE, FPS, ACTION_TIMER, ASTEROID_COUNT, ROCK_SPAWN_PERCENT, PLAYER_LAYER, GROUND_LAYER
+    from game.settings import WIN_WIDTH, WIN_HEIGHT, TILESIZE, FPS, ACTION_TIMER, ASTEROID_COUNT, ROCK_SPAWN_PERCENT, \
+        PLAYER_LAYER, GROUND_LAYER
     from game.tiles import TileMap, Tile, Asteroid
     from assets.Font import *
 
 try:
     from crypto import get_crypto_price
-except:
+except ImportError:
     from game.crypto import get_crypto_price
-
-
 
 
 class Game:
 
     def __init__(self) -> None:
+        """Initialization"""
         pygame.init()
         pygame.display.set_caption("Astro Explorer")
         self.screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
@@ -95,6 +96,7 @@ class Game:
             self.start = True
 
     def update(self) -> None:
+        """updates sprites and object properties"""
         self.make_labels()
         self.make_sound()
         self.all_sprites_group.update()
@@ -159,6 +161,7 @@ class Game:
                     self.current_map.rocks.remove(rock)
 
     def draw(self) -> None:
+        """blits / draws updates to screen"""
         self.current_map_group.draw(self.screen)
         if self.start:
             self.game_intro_sound = None
@@ -184,6 +187,7 @@ class Game:
         pygame.display.update()
 
     def switch_map(self, map) -> None:
+        """saves state and renders new map"""
         self.current_map.unload_tiles()
         self.current_map_group.empty()
         self.current_map = map
@@ -192,6 +196,7 @@ class Game:
             self.player.collision_map = self.current_map.collision_map
 
     def make_labels(self) -> None:
+        """text surfaces to render"""
         self.score_label = self.main_font.render(f"Score: {self.score}", True, (0, 255, 255))
         self.level_label = self.main_font.render(f"Level: {self.level}" , True, (0, 255, 255))
         self.game_title = self.game_font.render(f"ASTRO \t EXPLORER" , True, (140, 255, 140))
@@ -200,6 +205,7 @@ class Game:
         self.rocks_in_crypto = self.game_font_2.render(f"Total Rocks: {self.score} Price in {self.coin.upper()}: {self.score * self.crypto_price}", True, (180, 255, 180))
 
     def make_sound(self) -> None:
+        """sounds to render"""
         self.game_intro_sound = pygame.mixer.Sound("assets/Sound/8Bit Retro Logo.wav")
         self.game_intro_sound.set_volume(0.01)
         self.score_sound = pygame.mixer.Sound("assets/Sound/score.wav")
@@ -214,6 +220,7 @@ class Game:
         self.gameover_sound.set_volume(0.1)
 
     def update_map(self, filepath, is_space_map) -> None:
+        """if there is already a space map, reloads it rather than create a new one"""
         self.current_map_group.empty()
         self.terrain_group.empty()
         self.ship_group.empty()
@@ -226,6 +233,7 @@ class Game:
             self.player.collision_map = self.current_map.collision_map
 
     def countdown(self) -> None:
+        """countdown timer at bottom"""
         if self.minutes >= 0 and self.seconds >= 0:
             if self.milliseconds > 1000:
                 self.milliseconds = self.milliseconds % 1000
@@ -250,6 +258,7 @@ class Game:
         self.screen.blit(self.time_label, (WIN_WIDTH//2 - TILESIZE * 1.5, WIN_HEIGHT - TILESIZE * 2))
 
     def reload_space_map(self) -> None:
+        """refreshes space map with necessary sprite groups"""
         self.current_map_group.empty()
         self.terrain_group.empty()
         self.ship_group.empty()
@@ -262,6 +271,7 @@ class Game:
             self.player.collision_map = self.current_map.collision_map
 
     def main(self) -> None:
+        """controls the order the processes are run in"""
         while self.playing:
             self.events()
             self.update()
@@ -275,4 +285,3 @@ if __name__ == '__main__':
     while game.running:
         game.main()
     pygame.quit()
-

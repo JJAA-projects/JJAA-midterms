@@ -120,7 +120,6 @@ class TileMap:
         self.wormhole = None
         self.all_asteroidmaps = all_asteroidmaps
 
-        # TODO: This is a bool that will determine if the map should be populated with rocks/enemies or with asteroids.
         self.terrain = self.generate_terrain()
 
     def read_csv(self, filename):

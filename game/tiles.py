@@ -6,7 +6,7 @@ import pygame
 
 try:
     from settings import *
-except:
+except e:
     from game.settings import *
 
 

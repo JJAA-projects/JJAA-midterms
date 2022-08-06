@@ -3,7 +3,6 @@ import pygame
 
 
 class Component:
-
     def __init__(self, x, y, img_path, angle = 0):
         self.angle = 90
         self.x = x
@@ -40,9 +39,6 @@ class Component:
         if self.intended_y < self.y:
             self.y -= 2
 
-    # def tile_to_pixel(self, x, y):
-    #     return (x*16, y*16)
-
 
 class Ship(Component):
     def __init__(self, x, y, img_path, angle = 0):
@@ -59,14 +55,13 @@ class Ship(Component):
 
     def collision(self, obj):
         return collide(self, obj)
-        
 
     def rotate_img(self, angle):
         self.angle = angle
 
-
     def render(self):
         pass
+
 
 class Asteroid(Component):
     def __init__(self, x, y, img_path):
@@ -80,9 +75,11 @@ class Asteroid(Component):
         # self.facing = 0
         self.mask = pygame.mask.from_surface(self.img)
 
+
 def collide(obj1, obj2):
     offset_x = obj2.x - obj1.x
     offset_y = obj2.y - obj1.y
-    if obj1.mask.overlap(obj2.mask, (offset_x,offset_y)) != None:
+    if obj1.mask.overlap(obj2.mask, (offset_x, offset_y)) is not None:
         print("collided")
         return True
+

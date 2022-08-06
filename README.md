@@ -32,7 +32,7 @@ Good luck space explorers!
 
 ### Main
 
-![maimn](assets/Screenshot/main.png)
+![main](assets/Screenshot/main.png)
 
 ### Asteroid
 
@@ -40,7 +40,7 @@ Good luck space explorers!
 
 ### Game Over
 
-![gameover](assets/Screenshot/gameover.png)
+![game_over](assets/Screenshot/gameover.png)
 
 
 ## Credits

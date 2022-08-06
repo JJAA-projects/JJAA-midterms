@@ -6,7 +6,7 @@ import typing
 
 try:
     from settings import *
-except e:
+except ModuleNotFoundError as e:
     from game.settings import *
 
 

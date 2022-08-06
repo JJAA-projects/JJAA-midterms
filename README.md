@@ -10,12 +10,6 @@ Once you collect most of the rocks on all the asteroids, a wormhole will open up
 
 Good luck space explorers!
 
-## Screens
-
-### Welcome Scr# Astro Explorer
-
-Astro Explorer is a short arcade-style game written in pygame. The user controls a space miner who collects rocks to get a high score. But be quick, you only have 3 minutes to collect as many as you can!
-
 ## Controls
 
 Use the arrow keys or WASD to move. Fly to an asteroid to land on it and collect rocks. But watch out! If you stay away from your ship for too long, you'll run out of oxygen and get a game over! Your oxygen level is represented by the green bar at the top of the screen.

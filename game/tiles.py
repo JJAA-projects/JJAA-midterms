@@ -1,5 +1,8 @@
 import random
-import pygame, csv, os
+
+import csv
+import os
+import pygame
 
 try:
     from settings import *
@@ -35,6 +38,7 @@ class Asteroid(pygame.sprite.Sprite):
     def collide(self, player):
         return collide(self, player)
 
+
 class Rock(pygame.sprite.Sprite):
 
     def __init__(self, x, y, rock_group) -> None:
@@ -46,7 +50,8 @@ class Rock(pygame.sprite.Sprite):
         self.rect.x, self.rect.y = x, y
 
     def collide(self, player):
-        return (self.rect.x == player.rect.x and self.rect.y == player.rect.y)
+        return self.rect.x == player.rect.x and self.rect.y == player.rect.y
+
 
 class Wormhole(pygame.sprite.Sprite):
 
@@ -78,21 +83,15 @@ class Wormhole(pygame.sprite.Sprite):
             self.counter = 0
             self.image = pygame.transform.rotate(pygame.transform.scale(pygame.image.load(self.filepath, 'wormhole'), (TILESIZE * 4, TILESIZE * 4)), self.rotation)
 
-    def rot_center(self, image, angle, x, y):
-        rotated_image = pygame.transform.rotate(image, angle)
-        new_rect = rotated_image.get_rect(center=image.get_rect(center=(x, y)).center)
-
-        return new_rect
-
     def collide(self, player):
         return collide(self, player)
+
 
 class ParkSpaceShip(pygame.sprite.Sprite):
 
     def __init__(self, filepath, x, y, ship_group) -> None:
         super(ParkSpaceShip, self).__init__()
         ship_group.add(self)
-         # TODO: Load in space ship sprite once rock mining functionality works
         self.image = pygame.transform.scale(pygame.image.load("assets/ShipUpStill.png"), (TILESIZE * 1.5, TILESIZE * 1.5))
         self._layer: int = 8
         self.rect = self.image.get_rect()
@@ -101,6 +100,7 @@ class ParkSpaceShip(pygame.sprite.Sprite):
 
     def collide(self, player):
         return collide(self, player)
+
 
 class TileMap:
 
@@ -209,14 +209,15 @@ class TileMap:
         return tiles
 
     def generate_wormhole(self, worm_group) -> None:
-        new_wormhole = Wormhole("assets/Wormhole3.png", TILESIZE, (WIN_HEIGHT/2)-(TILESIZE*2), worm_group)
+        new_wormhole = Wormhole("assets/Wormhole.png", TILESIZE, (WIN_HEIGHT/2)-(TILESIZE*2), worm_group)
         worm_group.add(new_wormhole)
         self.wormhole = new_wormhole
+
 
 def collide(obj1, obj2):
     offset_x = obj2.rect.x - obj1.rect.x
     offset_y = obj2.rect.y - obj1.rect.y
-    if obj1.mask.overlap(obj2.mask, (offset_x, offset_y)) != None:
+    if obj1.mask.overlap(obj2.mask, (offset_x, offset_y)) is not None:
         return True
 
 

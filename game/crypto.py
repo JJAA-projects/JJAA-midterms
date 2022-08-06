@@ -11,10 +11,10 @@ def get_btc_price():
         for coin in coins:
             if coin['id'] == 'bitcoin':
                 btc_price = coin['current_price']
-                print("bitcoin price", btc_price)
         return btc_price
     except:
         return 23000
+
 
 if __name__ == "__main__":
     get_btc_price()

@@ -5,15 +5,17 @@ import sys
 import enum
 import time
 import random
+import typing
 
 try:
-    from sprites import Player
+    from sprites import *
     from settings import WIN_WIDTH, WIN_HEIGHT, TILESIZE, FPS, ACTION_TIMER, ASTEROID_COUNT, ROCK_SPAWN_PERCENT, PLAYER_LAYER, GROUND_LAYER
     from tiles import TileMap, Tile, Asteroid
 except:
     from game.sprites import Player
     from game.settings import WIN_WIDTH, WIN_HEIGHT, TILESIZE, FPS, ACTION_TIMER, ASTEROID_COUNT, ROCK_SPAWN_PERCENT, PLAYER_LAYER, GROUND_LAYER
     from game.tiles import TileMap, Tile, Asteroid
+    from assets.Font import *
 
 
 
@@ -153,15 +155,6 @@ class Game:
                     self.score += self.level
                     self.rock_group.remove(rock)
                     self.current_map.rocks.remove(rock)
-            # # if self.score >= 30:
-            # #     self.gameover = True
-            # #     self.player._layer = 1
-            # elif self.score >= 20:
-            #     self.level = 3
-            #     self.health = 6
-            # elif self.score >= 10:
-            #     self.level = 2
-            #     self.health = 8
 
 
     def draw(self):
@@ -205,7 +198,7 @@ class Game:
         self.start_intro = self.game_font_2.render(f"Press the space key play the game" , True, (255, 255, 255))
         self.gameover_label = self.main_font.render(f"GAME OVER", True, (255, 0, 0))
 
-    def make_sound(self):
+    def make_sound(self) -> None:
         self.game_intro_sound = pygame.mixer.Sound("assets/Sound/8Bit Retro Logo.wav")
         self.game_intro_sound.set_volume(0.01)
         self.score_sound = pygame.mixer.Sound("assets/Sound/score.wav")
@@ -219,7 +212,7 @@ class Game:
         self.gameover_sound = pygame.mixer.Sound("assets/Sound/gameover.wav")
         self.gameover_sound.set_volume(0.1)
 
-    def update_map(self, filepath, is_space_map):
+    def update_map(self, filepath, is_space_map) -> None:
         self.current_map_group.empty()
         self.terrain_group.empty()
         self.ship_group.empty()
@@ -231,8 +224,7 @@ class Game:
         if self.player:
             self.player.collision_map = self.current_map.collision_map
 
-    def countdown(self):
-
+    def countdown(self) -> None:
         if self.minutes >= 0 and self.seconds >= 0:
             if self.milliseconds > 1000:
                 self.milliseconds = self.milliseconds % 1000
@@ -257,7 +249,7 @@ class Game:
         self.screen.blit(self.time_label, (WIN_WIDTH//2 - TILESIZE * 1.5, WIN_HEIGHT - TILESIZE * 2))
 
     # TODO: rename
-    def reload_space_map(self):
+    def reload_space_map(self) -> None:
         self.current_map_group.empty()
         self.terrain_group.empty()
         self.ship_group.empty()
@@ -269,7 +261,7 @@ class Game:
         if self.player:
             self.player.collision_map = self.current_map.collision_map
 
-    def main(self):
+    def main(self) -> None:
         while self.playing:
             self.events()
             self.update()

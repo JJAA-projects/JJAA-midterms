@@ -16,5 +16,6 @@ def get_crypto_price(symbol):
     except:
         return price
 
+
 if __name__ == "__main__":
     get_crypto_price()

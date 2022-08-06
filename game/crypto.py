@@ -3,18 +3,18 @@ import requests
 import pprint
 
 
-def get_btc_price():
+def get_crypto_price(symbol):
+    price = 23000
     try:
-        btc_price = 0
         r = requests.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false')
         coins = r.json()
         for coin in coins:
-            if coin['id'] == 'bitcoin':
-                btc_price = coin['current_price']
-                print("bitcoin price", btc_price)
-        return btc_price
+            if coin['symbol'] == symbol:
+                price = coin['current_price']
+                print(f"{symbol} price", price)
+        return price
     except:
-        return 23000
+        return price
 
 if __name__ == "__main__":
-    get_btc_price()
+    get_crypto_price()

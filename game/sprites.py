@@ -6,7 +6,7 @@ import typing
 
 try:
     from settings import *
-except:
+except e:
     from game.settings import *
 
 

@@ -18,9 +18,9 @@ except:
     from assets.Font import *
 
 try:
-    from crypto import get_btc_price
+    from crypto import get_crypto_price
 except:
-    from game.crypto import get_btc_price
+    from game.crypto import get_crypto_price
 
 
 
@@ -60,7 +60,8 @@ class Game:
         self.all_asteroidmaps.sort()
         if self.all_asteroidmaps[0] == ".DS_Store":
             self.all_asteroidmaps.pop(0)
-        self.btc = get_btc_price()
+        self.coin = "btc"
+        self.crypto_price = get_crypto_price(self.coin)
 
     def run(self) -> None:
         """run game"""
@@ -169,7 +170,7 @@ class Game:
                 self.worm_group.draw(self.screen)
             if self.gameover:
                 self.screen.blit(self.gameover_label, (WIN_WIDTH // 2 - 136, WIN_HEIGHT / 2 - TILESIZE * 2))
-                self.screen.blit(self.rocks_in_btc, (TILESIZE * 2, WIN_HEIGHT / 2 + TILESIZE * 4))
+                self.screen.blit(self.rocks_in_crypto, (TILESIZE * 2, WIN_HEIGHT / 2 + TILESIZE * 4))
             self.countdown()
             pygame.draw.rect(self.screen, (200,0,0), (WIN_WIDTH // 2 - TILESIZE * 3, 24, TILESIZE * 6, 24))
             pygame.draw.rect(self.screen, (0,200,0), (WIN_WIDTH //2 - TILESIZE * 3, 24, ((TILESIZE * 6) - (((TILESIZE * 6)/10) * (10 - self.health))), 24))
@@ -196,7 +197,7 @@ class Game:
         self.game_title = self.game_font.render(f"ASTRO \t EXPLORER" , True, (140, 255, 140))
         self.start_intro = self.game_font_2.render(f"Press the space key play the game" , True, (255, 255, 255))
         self.gameover_label = self.main_font.render(f"GAME OVER", True, (255, 0, 0))
-        self.rocks_in_btc = self.game_font_2.render(f"Total Rocks: {self.score} Price in BTC: {self.score * self.btc}", True, (180, 255, 180))
+        self.rocks_in_crypto = self.game_font_2.render(f"Total Rocks: {self.score} Price in {self.coin.upper()}: {self.score * self.crypto_price}", True, (180, 255, 180))
 
     def make_sound(self) -> None:
         self.game_intro_sound = pygame.mixer.Sound("assets/Sound/8Bit Retro Logo.wav")

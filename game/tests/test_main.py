@@ -107,7 +107,7 @@ def test_asteroid_count() -> None:
     assert ASTEROID_COUNT == 3
 
 def test_rock_spawn_percent() -> None:
-    assert ROCK_SPAWN_PERCENT == 7
+    assert ROCK_SPAWN_PERCENT == 5
 
 def test_PLAYER_LAYER() -> None:
     assert GROUND_LAYER == 1

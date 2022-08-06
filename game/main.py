@@ -22,33 +22,33 @@ except:
 
 class Game:
 
-    def __init__(self):
+    def __init__(self)  -> None:
         pygame.init()
         pygame.display.set_caption("Astro Explorer")
         self.screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
         self.clock = pygame.time.Clock()
         self.font = pygame.font.get_default_font()  # can be customized
-        self.running = True
-        self.playing = False
-        self.gameover = False
+        self.running: bool = True
+        self.playing: bool = False
+        self.gameover: bool = False
         # TODO: BOOL for titlescreen. Stop all playerfunction and don't render player while this is true. Set to
         #  false when player starts the game
-        self.player = None
-        self.current_map = None
-        self.current_space_map = None
-        self.score = 0
-        self.level = 1
-        self.health = 10
-        self.clock = pygame.time.Clock()
-        self.minutes = 2
-        self.seconds = 60
-        self.milliseconds = 0
+        self.player: any = None
+        self.current_map: any = None
+        self.current_space_map: any = None
+        self.score: int = 0
+        self.level: int = 1
+        self.health: int = 10
+        self.clock: int = pygame.time.Clock()
+        self.minutes:int = 2
+        self.seconds: int = 60
+        self.milliseconds: int = 0
         self.main_font = pygame.font.SysFont("comicsans", 40, True, True)
         self.game_font = pygame.font.Font("assets/Font/Monoton-Regular.ttf", 60)
         self.game_font_2 = pygame.font.Font("assets/Font/heavy_data.ttf", 50)
-        self.current_frames = 0
+        self.current_frames: int = 0
         self.current_time = time.time()*1000
-        self.start = False
+        self.start: bool = False
         self.all_spacemaps = os.listdir("assets/MapsSpace")
         self.all_spacemaps.sort()
         if self.all_spacemaps[0] == ".DS_Store":
@@ -58,7 +58,7 @@ class Game:
         if self.all_asteroidmaps[0] == ".DS_Store":
             self.all_asteroidmaps.pop(0)
 
-    def run(self):
+    def run(self) -> None:
         """run game"""
         self.playing = True
         self.all_sprites_group = pygame.sprite.LayeredUpdates()
@@ -80,7 +80,7 @@ class Game:
         self.ship_group.empty()
         self.rock_group.empty()
 
-    def events(self):
+    def events(self) -> None:
         """listens for events"""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -92,7 +92,7 @@ class Game:
             self.start = True
 
 
-    def update(self):
+    def update(self) -> None:
         self.make_labels()
         self.make_sound()
         self.all_sprites_group.update()
@@ -157,8 +157,7 @@ class Game:
                     self.current_map.rocks.remove(rock)
 
 
-    def draw(self):
-        # TODO: Change this to load the tilemap
+    def draw(self) -> None:
         self.current_map_group.draw(self.screen)
         if self.start:
             self.game_intro_sound = None
@@ -183,7 +182,7 @@ class Game:
         pygame.display.update()
         
 
-    def switch_map(self, map):
+    def switch_map(self, map) -> None:
         self.current_map.unload_tiles()
         self.current_map_group.empty()
         self.current_map = map
@@ -191,7 +190,7 @@ class Game:
         if self.player:
             self.player.collision_map = self.current_map.collision_map
 
-    def make_labels(self):
+    def make_labels(self) -> None:
         self.score_label = self.main_font.render(f"Score: {self.score}", True, (0, 255, 255))
         self.level_label = self.main_font.render(f"Level: {self.level}" , True, (0, 255, 255))
         self.game_title = self.game_font.render(f"ASTRO \t EXPLORER" , True, (140, 255, 140))
@@ -266,7 +265,7 @@ class Game:
             self.events()
             self.update()
             self.draw()
-        self.running = False
+        self.running: bool = False
 
 
 if __name__ == '__main__':
@@ -274,6 +273,5 @@ if __name__ == '__main__':
     game.run()
     while game.running:
         game.main()
-
     pygame.quit()
 

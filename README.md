@@ -40,23 +40,3 @@ Good luck space explorers!
 ## Credits
 
 This game was written in the public library PyGame. The contributers to the coding are Aoife Mulligan, Jacob Amsbury, Anthony Turinski, and JJ Escandor. Most of the art is drawn by Aoife Mulligan.
-een
-
-![welcome](assets/Screenshot/welcome.png)
-
-### Main Screen
-
-![maimn](assets/Screenshot/main.png)
-
-### Asteroid Screen
-
-![asteroid](assets/Screenshot/asteroid.png)
-
-### Game over Screen
-
-![gameover](assets/Screenshot/gameover.png)
-
-
-## Credits
-
-This game was written in the public library PyGame. The contributers to the coding are Aoife Mulligan, Jacob Amsbury, Anthony Turinski, and JJ Escandor. Most of the art is drawn by Aoife Mulligan.

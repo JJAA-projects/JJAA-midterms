@@ -176,7 +176,8 @@ class Game:
                 self.screen.blit(self.rocks_in_crypto, (TILESIZE * 2, WIN_HEIGHT / 2 + TILESIZE * 4))
             self.countdown()
             pygame.draw.rect(self.screen, (200,0,0), (WIN_WIDTH // 2 - TILESIZE * 3, 24, TILESIZE * 6, 24))
-            pygame.draw.rect(self.screen, (0,200,0), (WIN_WIDTH //2 - TILESIZE * 3, 24, ((TILESIZE * 6) - (((TILESIZE * 6)/10) * (10 - self.health))), 24))
+            pygame.draw.rect(self.screen, (0,200,0), (WIN_WIDTH //2 - TILESIZE * 3, 24, ((TILESIZE * 6) -
+                (((TILESIZE * 6)/10) * (10 - self.health))), 24))
         else:
             self.screen.blit(self.game_title, (WIN_WIDTH //2 - TILESIZE * 9, WIN_HEIGHT //2 - TILESIZE * 3))
             self.screen.blit(self.start_intro, (WIN_WIDTH //2 - TILESIZE * 12, WIN_HEIGHT - TILESIZE * 3))
@@ -202,7 +203,9 @@ class Game:
         self.game_title = self.game_font.render(f"ASTRO \t EXPLORER" , True, (140, 255, 140))
         self.start_intro = self.game_font_2.render(f"Press the space key play the game" , True, (255, 255, 255))
         self.gameover_label = self.main_font.render(f"GAME OVER", True, (255, 0, 0))
-        self.rocks_in_crypto = self.game_font_2.render(f"Total Rocks: {self.score} Price in {self.coin.upper()}: {self.score * self.crypto_price}", True, (180, 255, 180))
+        self.rocks_in_crypto = self.game_font_2.render(
+            f"Total Rocks: {self.score} Price in {self.coin.upper()}: {self.score * self.crypto_price}",
+            True, (180, 255, 180))
 
     def make_sound(self) -> None:
         """sounds to render"""
@@ -226,7 +229,8 @@ class Game:
         self.ship_group.empty()
         self.rock_group.empty()
         self.current_map = None
-        self.current_map = TileMap(filepath, self.current_map_group, self.terrain_group, self.ship_group,self.rock_group, self.all_asteroidmaps, is_space_map)
+        self.current_map = TileMap(filepath, self.current_map_group, self.terrain_group, self.ship_group,
+            self.rock_group, self.all_asteroidmaps, is_space_map)
         if is_space_map:
             self.current_space_map = self.current_map
         if self.player:

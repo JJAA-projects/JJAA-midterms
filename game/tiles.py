@@ -24,7 +24,8 @@ class Tile(pygame.sprite.Sprite):
 
 class Asteroid(pygame.sprite.Sprite):
 
-    def __init__(self, filepath, mappath, x, y, terrain_group, tile_group, ship_group, rock_group, all_asteroidmaps) -> None:
+    def __init__(self, filepath, mappath, x, y, terrain_group, tile_group, ship_group, rock_group, all_asteroidmaps) \
+            -> None:
         super(Asteroid, self).__init__()
         terrain_group.add(self)
         self.group = tile_group
@@ -81,7 +82,8 @@ class Wormhole(pygame.sprite.Sprite):
             self.rotation += self.counter
             self.rotation = self.rotation % 360
             self.counter = 0
-            self.image = pygame.transform.rotate(pygame.transform.scale(pygame.image.load(self.filepath, 'wormhole'), (TILESIZE * 4, TILESIZE * 4)), self.rotation)
+            self.image = pygame.transform.rotate(pygame.transform.scale(pygame.image.load(self.filepath, 'wormhole'), \
+                (TILESIZE * 4, TILESIZE * 4)), self.rotation)
 
     def collide(self, player):
         return collide(self, player)
@@ -92,7 +94,8 @@ class ParkSpaceShip(pygame.sprite.Sprite):
     def __init__(self, filepath, x, y, ship_group) -> None:
         super(ParkSpaceShip, self).__init__()
         ship_group.add(self)
-        self.image = pygame.transform.scale(pygame.image.load("assets/ShipUpStill.png"), (TILESIZE * 1.5, TILESIZE * 1.5))
+        self.image = pygame.transform.scale(pygame.image.load("assets/ShipUpStill.png"), \
+            (TILESIZE * 1.5, TILESIZE * 1.5))
         self._layer: int = 8
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
@@ -104,7 +107,8 @@ class ParkSpaceShip(pygame.sprite.Sprite):
 
 class TileMap:
 
-    def __init__(self, filename, tile_group, terrain_group, ship_group, rock_group, all_asteroidmaps, is_space_map) -> None:
+    def __init__(self, filename, tile_group, terrain_group, ship_group, rock_group, all_asteroidmaps, is_space_map) \
+            -> None:
         self.is_space_map = is_space_map
         self.tile_group = tile_group
         self.terrain_group = terrain_group
@@ -154,9 +158,24 @@ class TileMap:
     def generate_terrain(self):
         terrain = []
         if self.is_space_map:
-            terrain.append(Asteroid("assets/MapTiles/31zAstDebris03.png", "assets/MapsAsteroid/"+self.all_asteroidmaps[random.randint(0,len(self.all_asteroidmaps)-1)], random.randrange(TILESIZE, TILESIZE * 28), random.randrange(TILESIZE, TILESIZE * 10), self.terrain_group, self.tile_group, self.ship_group, self.rock_group, self.all_asteroidmaps))
-            terrain.append(Asteroid("assets/MapTiles/31zAstDebris03.png", "assets/MapsAsteroid/"+self.all_asteroidmaps[random.randint(0,len(self.all_asteroidmaps)-1)], random.randrange(TILESIZE, TILESIZE * 15), random.randrange(TILESIZE * 10, TILESIZE *18 ), self.terrain_group, self.tile_group, self.ship_group, self.rock_group, self.all_asteroidmaps))
-            terrain.append(Asteroid("assets/MapTiles/31zAstDebris03.png", "assets/MapsAsteroid/"+self.all_asteroidmaps[random.randint(0,len(self.all_asteroidmaps)-1)], random.randrange(TILESIZE * 16, TILESIZE * 28),random.randrange(TILESIZE * 10, TILESIZE * 18), self.terrain_group, self.tile_group, self.ship_group, self.rock_group, self.all_asteroidmaps))
+            terrain.append(
+                Asteroid("assets/MapTiles/31zAstDebris03.png", "assets/MapsAsteroid/"
+                +self.all_asteroidmaps[random.randint(0,len(self.all_asteroidmaps)-1)],
+                random.randrange(TILESIZE, TILESIZE * 28), random.randrange(TILESIZE, TILESIZE * 10),
+                self.terrain_group, self.tile_group, self.ship_group, self.rock_group, self.all_asteroidmaps)
+            )
+            terrain.append(Asteroid(
+                "assets/MapTiles/31zAstDebris03.png", "assets/MapsAsteroid/"
+                +self.all_asteroidmaps[random.randint(0,len(self.all_asteroidmaps)-1)],
+                random.randrange(TILESIZE, TILESIZE * 15), random.randrange(TILESIZE * 10, TILESIZE *18 ),
+                self.terrain_group, self.tile_group, self.ship_group, self.rock_group, self.all_asteroidmaps)
+            )
+            terrain.append(
+                Asteroid("assets/MapTiles/31zAstDebris03.png", "assets/MapsAsteroid/"
+                +self.all_asteroidmaps[random.randint(0,len(self.all_asteroidmaps)-1)],
+                random.randrange(TILESIZE * 16, TILESIZE * 28),random.randrange(TILESIZE * 10, TILESIZE * 18),
+                self.terrain_group, self.tile_group, self.ship_group, self.rock_group, self.all_asteroidmaps)
+            )
         return terrain
 
     def generate_ship(self):
@@ -192,7 +211,8 @@ class TileMap:
             collision_row = []
             x = 0
             for tile in row:
-                tiles.append(Tile("assets/MapTiles/"+tile_list[int(tile)], x * self.tile_size, y * self.tile_size, self.tile_group))
+                tiles.append(Tile("assets/MapTiles/"+tile_list[int(tile)], x * self.tile_size, y * self.tile_size,
+                    self.tile_group))
                 x += 1
                 if not self.is_space_map:
                     if (int(tile) < 3) or (7 < int(tile) < 17):

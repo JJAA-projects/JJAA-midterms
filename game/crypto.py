@@ -14,7 +14,7 @@ def get_crypto_price(symbol):
                 price = coin['current_price']
                 print(f"{symbol} price", price)
         return price
-    except e:
+    except ModuleNotFoundError as e:
         return price
 
 
